@@ -1,0 +1,108 @@
+<!--pages/order-detail/order-detail.wxml-->
+<wxs src="../../../utils/format.wxs" module="format" />
+<view class="container">
+  <view wx:if="{{order}}" class="content">
+    <!-- 状态卡片 -->
+    <view class="status-card">
+      <view class="status-icon">
+        <text>{{order.status === 1 ? '💰' : order.status === 2 ? '📦' : order.status === 3 ? '🚚' : '✅'}}</text>
+      </view>
+      <view class="status-text">
+        <text class="status-title">{{order.status === 1 ? '等待客户支付' : order.status === 2 ? '待配送' : order.status === 3 ? '配送中' : '已完成'}}</text>
+        <text class="status-desc">订单号: {{order.orderNo}}</text>
+      </view>
+    </view>
+
+    <!-- 客户信息 -->
+    <view class="info-card">
+      <view class="card-title">客户信息</view>
+      <view class="customer-info">
+        <image class="avatar" src="{{order.userInfo.avatarUrl}}" mode="aspectFill"></image>
+        <view class="customer-detail">
+          <text class="customer-name">{{order.userInfo.nickName}}</text>
+          <text class="customer-phone" bindtap="onCallPhone">{{order.userInfo.phoneNumber}}</text>
+        </view>
+        <view class="call-btn" bindtap="onCallPhone">
+          <text>📞</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 配送地址 -->
+    <view class="info-card">
+      <view class="card-title">配送地址</view>
+      <view class="address-info">
+        <view class="address-header">
+          <text class="address-name">{{order.address.name}}</text>
+          <text class="address-phone">{{order.address.phone}}</text>
+        </view>
+        <view class="address-detail">
+          <text class="address-icon">📍</text>
+          <text class="address-text">{{order.address.province}}{{order.address.city}}{{order.address.district}}{{order.address.detail}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 菜品清单 -->
+    <view class="info-card">
+      <view class="card-title">菜品清单</view>
+      <view class="dishes-list">
+        <view wx:for="{{order.dishes}}" wx:key="dishId" class="dish-item">
+          <image class="dish-image" src="{{item.image}}" mode="aspectFill"></image>
+          <view class="dish-info">
+            <text class="dish-name">{{item.name}}</text>
+            <text class="dish-quantity">x{{item.quantity}}</text>
+          </view>
+          <text class="dish-price">¥{{format.toFixed(item.price)}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 订单信息 -->
+    <view class="info-card">
+      <view class="card-title">订单信息</view>
+      <view class="order-info">
+        <view class="info-row">
+          <text class="info-label">订单编号</text>
+          <text class="info-value">{{order.orderNo}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">下单时间</text>
+          <text class="info-value">{{order.createTime}}</text>
+        </view>
+        <view wx:if="{{order.payTime}}" class="info-row">
+          <text class="info-label">支付时间</text>
+          <text class="info-value">{{order.payTime}}</text>
+        </view>
+        <view wx:if="{{order.completeTime}}" class="info-row">
+          <text class="info-label">完成时间</text>
+          <text class="info-value">{{order.completeTime}}</text>
+        </view>
+        <view wx:if="{{order.remark}}" class="info-row">
+          <text class="info-label">备注</text>
+          <text class="info-value remark">{{order.remark}}</text>
+        </view>
+        <view class="info-row total">
+          <text class="info-label">订单总额</text>
+          <text class="info-value amount">¥{{format.toFixed(order.totalAmount)}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <view wx:if="{{order}}" class="bottom-actions">
+    <view wx:if="{{order.status === 1}}" class="action-tip">等待客户支付...</view>
+    <view wx:if="{{order.status === 2}}" class="action-buttons">
+      <button class="btn-action btn-primary" bindtap="onStartDelivery">开始配送</button>
+    </view>
+    <view wx:if="{{order.status === 3}}" class="action-buttons">
+      <button class="btn-action btn-primary" bindtap="onComplete">确认完成</button>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text>加载中...</text>
+  </view>
+</view>

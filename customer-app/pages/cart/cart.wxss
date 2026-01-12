@@ -1,0 +1,139 @@
+/* pages/cart/cart.wxss */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.cart-list {
+  flex: 1;
+  padding: 20rpx;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.item-image {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  margin-right: 20rpx;
+}
+
+.item-info {
+  flex: 1;
+}
+
+.item-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 12rpx;
+}
+
+.item-price {
+  color: #bc0bf6;
+  font-size: 28rpx;
+}
+
+.price-symbol {
+  font-size: 22rpx;
+}
+
+.item-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+}
+
+.btn-minus,
+.btn-plus {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+
+.btn-minus {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.btn-plus {
+  background-color: #bc0bf6;
+  color: #fff;
+}
+
+.quantity {
+  margin: 0 16rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  min-width: 40rpx;
+  text-align: center;
+}
+
+/* 底部操作栏 */
+.cart-footer {
+  background-color: #fff;
+  padding: 20rpx;
+  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.footer-info {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.total-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.total-price {
+  color: #bc0bf6;
+  font-weight: bold;
+  margin-left: 10rpx;
+}
+
+.price-value {
+  font-size: 40rpx;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+.btn-clear {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  color: #666;
+  border: none;
+  border-radius: 40rpx;
+}
+
+.btn-checkout {
+  flex: 2;
+}

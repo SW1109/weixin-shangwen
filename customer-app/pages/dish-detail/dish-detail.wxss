@@ -1,0 +1,256 @@
+/* pages/dish-detail/dish-detail.wxss */
+.container {
+  padding-bottom: 120rpx;
+  background: #f5f5f5;
+}
+
+/* 菜品图片 */
+.dish-image {
+  width: 100%;
+  background: #fff;
+}
+
+.dish-image image {
+  width: 100%;
+  display: block;
+}
+
+/* 菜品信息 */
+.dish-info {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.dish-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+}
+
+.dish-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  flex: 1;
+}
+
+.dish-tags {
+  display: flex;
+  gap: 10rpx;
+}
+
+.tag {
+  padding: 4rpx 12rpx;
+  background: #bc0bf6;
+  color: #fff;
+  font-size: 20rpx;
+  border-radius: 4rpx;
+}
+
+.dish-desc {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 20rpx;
+}
+
+.dish-price-stock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+}
+
+.currency {
+  font-size: 28rpx;
+  color: #bc0bf6;
+  font-weight: bold;
+}
+
+.amount {
+  font-size: 48rpx;
+  color: #bc0bf6;
+  font-weight: bold;
+}
+
+.unit {
+  font-size: 24rpx;
+  color: #999;
+  margin-left: 8rpx;
+}
+
+.stock {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 详情部分 */
+.detail-section {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #eee;
+}
+
+.detail-content {
+  font-size: 28rpx;
+}
+
+.detail-item {
+  display: flex;
+  margin-bottom: 20rpx;
+  line-height: 1.6;
+}
+
+.detail-item:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  color: #999;
+  width: 120rpx;
+  flex-shrink: 0;
+}
+
+.value {
+  color: #333;
+  flex: 1;
+}
+
+.value.warning {
+  color: #bc0bf6;
+}
+
+/* 统计信息 */
+.stats-section {
+  background: #fff;
+  padding: 30rpx;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.stat-value {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #bc0bf6;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.stat-divider {
+  width: 1rpx;
+  height: 60rpx;
+  background: #eee;
+}
+
+/* 底部操作栏 */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  background: #fff;
+  border-top: 1rpx solid #eee;
+  display: flex;
+  align-items: center;
+  padding: 0 30rpx;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.cart-wrapper {
+  position: relative;
+  margin-right: 30rpx;
+}
+
+.cart-icon {
+  width: 50rpx;
+  height: 50rpx;
+}
+
+.cart-count {
+  position: absolute;
+  top: -10rpx;
+  right: -10rpx;
+  background: #bc0bf6;
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 8rpx;
+  border-radius: 20rpx;
+  min-width: 32rpx;
+  text-align: center;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  border: 1rpx solid #ddd;
+  border-radius: 8rpx;
+  overflow: hidden;
+  margin-right: 20rpx;
+}
+
+.btn-minus,
+.btn-plus {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: #333;
+  background: #f5f5f5;
+}
+
+.btn-minus.disabled {
+  color: #ccc;
+}
+
+.quantity-input {
+  width: 80rpx;
+  height: 60rpx;
+  text-align: center;
+  font-size: 28rpx;
+  border-left: 1rpx solid #ddd;
+  border-right: 1rpx solid #ddd;
+}
+
+.btn-add-cart {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  background: #bc0bf6;
+  color: #fff;
+  font-size: 28rpx;
+  border-radius: 40rpx;
+  text-align: center;
+}
+
+.btn-add-cart[disabled] {
+  background: #ccc;
+}

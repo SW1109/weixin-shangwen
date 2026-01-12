@@ -1,0 +1,58 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/dish-detail/dish-detail",
+    "pages/cart/cart",
+    "pages/order-confirm/order-confirm",
+    "pages/order-list/order-list",
+    "pages/order-detail/order-detail",
+    "pages/address-list/address-list",
+    "pages/address-edit/address-edit",
+    "pages/user/user",
+    "pages/user-edit/user-edit",
+    "pages/login/login",
+    "pages/merchant/home/home",
+    "pages/merchant/order-list/order-list",
+    "pages/merchant/order-detail/order-detail",
+    "pages/merchant/dish-list/dish-list",
+    "pages/merchant/dish-edit/dish-edit",
+    "pages/merchant/category-manage/category-manage",
+    "pages/merchant/statistics/statistics",
+    "pages/merchant/login/login"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#bc0bf6",
+    "navigationBarTitleText": "美食点餐",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#bc0bf6",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "点餐",
+        "iconPath": "images/tabbar/home.png",
+        "selectedIconPath": "images/tabbar/home-active.png"
+      },
+      {
+        "pagePath": "pages/order-list/order-list",
+        "text": "订单",
+        "iconPath": "images/tabbar/order.png",
+        "selectedIconPath": "images/tabbar/order-active.png"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "text": "我的",
+        "iconPath": "images/tabbar/user.png",
+        "selectedIconPath": "images/tabbar/user-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "cloud": true
+}

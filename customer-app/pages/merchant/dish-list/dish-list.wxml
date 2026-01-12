@@ -1,0 +1,94 @@
+<!--pages/dish-list/dish-list.wxml-->
+<wxs src="../../../utils/format.wxs" module="format" />
+<view class="container">
+  <!-- 顶部操作栏 -->
+  <view class="top-bar">
+    <button class="btn-add" bindtap="onAddDish">+ 添加菜品</button>
+    <button class="btn-category" bindtap="onManageCategory">分类管理</button>
+  </view>
+
+  <!-- 分类标签 -->
+  <view class="categories">
+    <scroll-view class="category-scroll" scroll-x>
+      <view class="category-list">
+        <view 
+          class="category-tag {{selectedCategory === null ? 'active' : ''}}"
+          bindtap="onSelectCategory"
+          data-id="{{null}}"
+        >
+          全部
+        </view>
+        <view 
+          wx:for="{{categories}}" 
+          wx:key="_id"
+          class="category-tag {{selectedCategory === item._id ? 'active' : ''}}"
+          bindtap="onSelectCategory"
+          data-id="{{item._id}}"
+        >
+          {{item.name}}
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 菜品列表 -->
+  <view class="dish-list">
+    <view wx:if="{{dishes.length > 0}}">
+      <view wx:for="{{dishes}}" wx:key="_id" class="dish-card">
+        <image class="dish-image" src="{{item.image}}" mode="aspectFill" bindtap="onEditDish" data-id="{{item._id}}"></image>
+        
+        <view class="dish-content" bindtap="onEditDish" data-id="{{item._id}}">
+          <view class="dish-header">
+            <text class="dish-name">{{item.name}}</text>
+            <view class="dish-status {{item.status === 1 ? 'status-on' : 'status-off'}}">
+              {{item.status === 1 ? '已上架' : '已下架'}}
+            </view>
+          </view>
+          
+          <view class="dish-desc">{{item.description}}</view>
+          
+          <view class="dish-footer">
+            <view class="dish-price">
+              <text class="price-symbol">¥</text>
+              <text class="price-value">{{format.toFixed(item.price)}}</text>
+            </view>
+            <view class="dish-info">
+              <text class="info-item">库存: {{item.stock === -1 ? '无限' : item.stock}}</text>
+              <text class="info-item">销量: {{item.sales || 0}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="dish-actions">
+          <button 
+            class="action-btn btn-toggle"
+            bindtap="onToggleStatus"
+            data-id="{{item._id}}"
+            data-status="{{item.status}}"
+          >
+            {{item.status === 1 ? '下架' : '上架'}}
+          </button>
+          <button 
+            class="action-btn btn-delete"
+            bindtap="onDeleteDish"
+            data-id="{{item._id}}"
+            data-name="{{item.name}}"
+          >
+            删除
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{dishes.length === 0 && !loading}}" class="empty-state">
+      <text class="empty-icon">🍽️</text>
+      <text class="empty-text">暂无菜品，点击右上角添加吧</text>
+    </view>
+
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="loading-container">
+      <text>加载中...</text>
+    </view>
+  </view>
+</view>

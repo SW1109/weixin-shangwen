@@ -1,0 +1,84 @@
+<wxs src="../../../utils/format.wxs" module="format" />
+<view class="container">
+  <!-- 日期范围选择 -->
+  <view class="date-range">
+    <view
+      class="range-item {{dateRange === 'today' ? 'active' : ''}}"
+      bindtap="onDateRangeChange"
+      data-range="today"
+    >
+      今日
+    </view>
+    <view
+      class="range-item {{dateRange === 'week' ? 'active' : ''}}"
+      bindtap="onDateRangeChange"
+      data-range="week"
+    >
+      近7天
+    </view>
+    <view
+      class="range-item {{dateRange === 'month' ? 'active' : ''}}"
+      bindtap="onDateRangeChange"
+      data-range="month"
+    >
+      近30天
+    </view>
+  </view>
+
+  <!-- 统计卡片 -->
+  <view class="stats-grid">
+    <view class="stats-card">
+      <view class="stats-value">¥{{format.toFixed(stats.totalSales)}}</view>
+      <view class="stats-label">总销售额</view>
+    </view>
+    <view class="stats-card">
+      <view class="stats-value">{{stats.totalOrders}}</view>
+      <view class="stats-label">订单数量</view>
+    </view>
+    <view class="stats-card">
+      <view class="stats-value">{{stats.totalDishes}}</view>
+      <view class="stats-label">售出菜品</view>
+    </view>
+    <view class="stats-card">
+      <view class="stats-value">¥{{stats.avgOrderAmount}}</view>
+      <view class="stats-label">平均客单价</view>
+    </view>
+  </view>
+
+  <!-- 热销菜品排行 -->
+  <view class="section-card">
+    <view class="section-title">热销菜品排行</view>
+    <view wx:if="{{topDishes.length > 0}}" class="dish-ranking">
+      <view wx:for="{{topDishes}}" wx:key="_id" class="ranking-item">
+        <view class="rank-number rank-{{index + 1}}">{{index + 1}}</view>
+        <image class="dish-image" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="dish-info">
+          <text class="dish-name">{{item.name}}</text>
+          <text class="dish-sales">销量: {{item.sales}}</text>
+        </view>
+        <view class="dish-amount">
+          <text class="amount-value">¥{{format.toFixed(item.sales * item.price)}}</text>
+          <text class="amount-label">总额</text>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty-tip">
+      <text>该时段暂无销售数据</text>
+    </view>
+  </view>
+
+  <!-- 销售趋势 -->
+  <view class="section-card">
+    <view class="section-title">销售趋势</view>
+    <view class="trend-placeholder">
+      <text class="trend-icon">📈</text>
+      <text class="trend-text">图表功能开发中...</text>
+      <text class="trend-desc">可使用第三方图表库如 ECharts for 微信小程序</text>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-overlay">
+    <text>加载中...</text>
+  </view>
+</view>

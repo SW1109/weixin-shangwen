@@ -1,0 +1,12 @@
+var toFixed = function (num, digits) {
+  digits = digits || 2;
+  var d = parseFloat(num);
+  if (isNaN(d)) {
+    return '0.00';
+  }
+  return d.toFixed(digits);
+}
+
+module.exports = {
+  toFixed: toFixed
+}

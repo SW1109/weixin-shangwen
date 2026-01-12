@@ -1,0 +1,243 @@
+/* pages/home/home.wxss */
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 20rpx;
+}
+
+.stats-card,
+.order-status-card,
+.function-card,
+.top-dishes-card,
+.recent-orders-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.more {
+  font-size: 28rpx;
+  font-weight: normal;
+  color: #bc0bf6;
+}
+
+/* 常用功能 */
+.function-list {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.function-item {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.function-icon {
+  font-size: 48rpx;
+  margin-bottom: 12rpx;
+  background: #f8f8f8;
+  width: 90rpx;
+  height: 90rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.function-label {
+  font-size: 26rpx;
+  color: #333;
+}
+
+/* 今日统计 */
+.stats-grid {
+  display: flex;
+  justify-content: space-around;
+}
+
+.stats-item {
+  text-align: center;
+}
+
+.stats-value {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #bc0bf6;
+  margin-bottom: 10rpx;
+}
+
+.stats-label {
+  font-size: 26rpx;
+  color: #999;
+}
+
+/* 订单状态 */
+.status-list {
+  display: flex;
+  justify-content: space-around;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx;
+}
+
+.status-icon {
+  font-size: 48rpx;
+  margin-bottom: 10rpx;
+}
+
+.status-count {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.status-label {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 热销菜品 */
+.dish-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.dish-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.dish-item:last-child {
+  border-bottom: none;
+}
+
+.dish-image {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 8rpx;
+  margin-right: 20rpx;
+}
+
+.dish-info {
+  flex: 1;
+}
+
+.dish-name {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.dish-sales {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.dish-price {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #bc0bf6;
+}
+
+/* 最近订单 */
+.order-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-item {
+  padding: 24rpx;
+  background: #f8f8f8;
+  border-radius: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.order-item:last-child {
+  margin-bottom: 0;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.order-no {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.order-status {
+  font-size: 24rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+}
+
+.status-1 {
+  background: #fff7e6;
+  color: #fa8c16;
+}
+
+.status-2 {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.status-3 {
+  background: #f0f5ff;
+  color: #597ef7;
+}
+
+.status-4 {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.order-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-amount {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #bc0bf6;
+}
+
+.order-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60rpx 0;
+  color: #999;
+  font-size: 28rpx;
+}
