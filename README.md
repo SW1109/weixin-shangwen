@@ -14,14 +14,8 @@ weixin-shangwen/
 │   ├── utils/            # 工具函数
 │   ├── app.js           # 应用入口
 │   ├── app.json         # 应用配置
-│   └── app.wxss         # 全局样式
-├── merchant-app/          # 商家管理小程序
-│   ├── pages/            # 页面
-│   ├── utils/            # 工具函数
-│   ├── app.js
-│   ├── app.json
-│   └── app.wxss
-├── cloudfunctions/        # 云函数
+│   ├── app.wxss         # 全局样式
+    ├── cloudfunctions/        # 云函数
 │   ├── login/            # 用户登录
 │   ├── merchantLogin/    # 商家登录
 │   ├── createOrder/      # 创建订单
