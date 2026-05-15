@@ -1,448 +1,203 @@
-# 点餐微信小程序系统
+# 上文点餐小程序
 
-一个完整的点餐系统，包含客户端和商家管理端两个小程序，使用微信小程序原生框架和腾讯云开发（CloudBase）。
+上文点餐是一个从原生微信小程序重构而来的点餐系统，当前版本由两部分组成：
 
+- `uniapp/`：Vue 3 + TypeScript + uni-app 微信小程序前端。
+- `server/`：Node.js + Fastify + MySQL 后端服务，适配宝塔 Linux + PM2 + Nginx 部署。
 
-#bc0bf6
+当前项目同时覆盖用户点餐端和商家管理端。用户端用于浏览菜品、购物车、下单、支付模拟、订单查询和地址管理；商家端用于订单处理、菜品管理、分类管理、图片上传和经营统计。
 
-## 📱 项目结构
+## 功能概览
 
-```
+### 用户端
+
+- 菜品分类、搜索、详情页。
+- 购物车增减、清空、结算。
+- 用户登录，支持本地 mock 微信登录和真实微信 `code2session`。
+- 收货地址新增、编辑、删除、默认地址。
+- 创建订单、模拟支付、取消订单。
+- 订单列表、订单详情、不同状态筛选。
+- 个人中心、资料编辑、头像上传。
+
+### 商家端
+
+- 商家账号登录，默认账号见数据库说明。
+- 工作台：今日销售额、订单数、菜品数、订单状态、热销菜品、最近订单。
+- 订单管理：待支付、待配送、配送中、已完成等状态筛选。
+- 订单详情：客户信息、配送地址、菜品清单、订单状态流转。
+- 菜品管理：新增、编辑、删除、上下架、排序、标签、推荐菜、图片上传。
+- 分类管理：新增、编辑、删除、启用/禁用、排序。
+- 经营统计：今日、近 7 天、近 30 天销售统计与热销排行。
+- 商家订单页面已用可见页面轮询适配原生云数据库 `watchOrders` 的准实时体验。
+
+## 技术栈
+
+### 前端
+
+- Vue 3
+- TypeScript
+- uni-app
+- Pinia
+- SCSS
+- 微信小程序构建目标：`mp-weixin`
+
+### 后端
+
+- Node.js `>=20.11.0`
+- Fastify 5
+- MySQL 5.7+/8.0
+- JWT 鉴权
+- Fastify multipart/static 图片上传与静态访问
+- PM2 常驻运行
+
+## 目录结构
+
+```text
 weixin-shangwen/
-├── customer-app/          # 客户小程序
-│   ├── pages/            # 页面
-│   ├── utils/            # 工具函数
-│   ├── app.js           # 应用入口
-│   ├── app.json         # 应用配置
-│   ├── app.wxss         # 全局样式
-    ├── cloudfunctions/        # 云函数
-│   ├── login/            # 用户登录
-│   ├── merchantLogin/    # 商家登录
-│   ├── createOrder/      # 创建订单
-│   ├── payOrder/         # 订单支付
-│   ├── updateOrderStatus/# 更新订单状态
-│   ├── manageDish/       # 管理菜品
-│   └── getStatistics/    # 获取统计数据
-├── 需求文档.md
-├── 系统设计.md
-└── README.md
+├── README.md                         # 项目总说明
+├── docs/                             # 详细文档
+│   ├── DEPLOYMENT.md                 # 本地、宝塔、微信开发者工具部署
+│   ├── FRONTEND.md                   # 前端页面、构建、主题说明
+│   ├── API.md                        # 后端接口清单
+│   ├── DATABASE.md                   # 数据库、升级、测试数据
+│   └── TROUBLESHOOTING.md            # 常见问题
+├── server/                           # Node.js 后端
+│   ├── src/
+│   │   ├── routes/                   # auth/common/customer/merchant/upload
+│   │   ├── lib/                      # DB、认证、订单、数据映射
+│   │   ├── app.js                    # Fastify app
+│   │   └── server.js                 # 启动入口
+│   ├── database/
+│   │   ├── init.sql                  # 初始化库表和默认商家
+│   │   ├── upgrade-20260515-dish-sort.sql
+│   │   └── seed-test-data.sql        # 测试数据
+│   ├── .env.example
+│   └── ecosystem.config.cjs          # PM2 配置
+├── uniapp/                           # uni-app 前端
+│   ├── src/
+│   │   ├── api/                      # HTTP API 封装
+│   │   ├── components/               # 公共组件
+│   │   ├── composables/              # 登录守卫、可见轮询等
+│   │   ├── pages/customer/           # 用户端页面
+│   │   ├── pages/merchant/           # 商家端页面
+│   │   ├── stores/                   # Pinia store
+│   │   └── utils/                    # 格式化、请求、订单工具
+│   ├── pages.json
+│   └── package.json
+└── 重构实施说明.md                    # 历史重构说明
 ```
 
-## ✨ 功能特性
+## 快速开始
 
-### 客户小程序
-- ✅ 微信授权登录
-- ✅ 菜品分类浏览
-- ✅ 菜品搜索
-- ✅ 购物车管理
-- ✅ 订单提交
-- ✅ 在线支付（模拟）
-- ✅ 订单查看与追踪
-- ✅ 收货地址管理
-- ✅ 个人中心
+### 1. 启动后端
 
-### 商家管理小程序
-- ✅ 商家账号登录
-- ✅ 菜品增删改查
-- ✅ 菜品上下架
-- ✅ 库存管理
-- ✅ 分类管理
-- ✅ 实时接收新订单
-- ✅ 订单状态管理
-- ✅ 销售数据统计
-- ✅ 热销菜品排行
-
-### 数据实时同步
-- ✅ 客户下单 → 商家端实时显示
-- ✅ 商家修改菜品 → 客户端立即生效
-- ✅ 订单状态更新双向同步
-
-## 🚀 快速开始
-
-### 1. 环境准备
-
-- 微信开发者工具（最新版）
-- 微信小程序账号（AppID）
-- 腾讯云开发环境
-
-### 2. 创建云开发环境
-
-1. 打开微信开发者工具
-2. 新建小程序项目，选择云开发模板
-3. 在云开发控制台创建环境
-4. 获取环境 ID（env-xxxxx）
-
-### 3. 配置项目
-
-#### 3.1 配置客户小程序
-
-编辑 `customer-app/project.config.json`：
-```json
-{
-  "appid": "wx21144b5e33c0dd44",
-  "cloudfunctionRoot": "../cloudfunctions/"
-}
+```bash
+cd server
+npm install
+cp .env.example .env
+npm run dev
 ```
 
-编辑 `customer-app/app.js`：
-```javascript
-wx.cloud.init({
-  env: 'your-env-id', // 替换为您的云环境 ID
-  traceUser: true,
-})
+后端默认地址：
+
+```text
+http://127.0.0.1:3000/api
 ```
 
-#### 3.2 配置商家管理小程序
+健康检查：
 
-编辑 `merchant-app/project.config.json`：
-```json
-{
-  "appid": "your-merchant-appid",
-  "cloudfunctionRoot": "../cloudfunctions/"
-}
+```text
+GET http://127.0.0.1:3000/api/health
 ```
 
-编辑 `merchant-app/app.js`：
-```javascript
-wx.cloud.init({
-  env: 'your-env-id', // 使用相同的云环境 ID
-  traceUser: true,
-})
+数据库初始化、`.env` 配置和宝塔部署见 [部署文档](docs/DEPLOYMENT.md) 与 [数据库文档](docs/DATABASE.md)。
+
+### 2. 启动前端
+
+编辑 `uniapp/.env`：
+
+```env
+VITE_API_BASE_URL=http://127.0.0.1:3000/api
+VITE_MOCK_WECHAT_LOGIN=true
 ```
 
-### 4. 上传云函数
+运行：
 
-在微信开发者工具中：
-
-1. 右键点击 `cloudfunctions/login` → 上传并部署：云端安装依赖
-2. 依次上传所有云函数：
-   - login
-   - merchantLogin
-   - createOrder
-   - payOrder
-   - updateOrderStatus
-   - manageDish
-   - getStatistics
-
-### 5. 初始化数据库
-
-在云开发控制台 → 数据库 → 新建集合，创建以下集合：
-
-- `users` - 用户信息
-- `categories` - 菜品分类
-- `dishes` - 菜品信息
-- `orders` - 订单数据
-- `addresses` - 收货地址
-- `merchants` - 商家账号
-- `carts` - 购物车
-
-#### 5.1 创建商家账号
-
-在 `merchants` 集合中添加记录：
-```json
-{
-  "username": "admin",
-  "password": "e10adc3949ba59abbe56e057f20f883e",
-  "role": "admin",
-  "storeName": "美食餐厅",
-  "storePhone": "0755-12345678",
-  "storeAddress": "深圳市南山区科技园",
-  "status": 1,
-  "createTime": "2024-01-07T00:00:00.000Z",
-  "updateTime": "2024-01-07T00:00:00.000Z"
-}
-```
-注：默认密码为 `123456`（MD5加密后）
-
-#### 5.2 创建菜品分类
-
-在 `categories` 集合中添加记录：
-```json
-[
-  {
-    "name": "热销推荐",
-    "sort": 1,
-    "status": 1,
-    "createTime": "2024-01-07T00:00:00.000Z",
-    "updateTime": "2024-01-07T00:00:00.000Z"
-  },
-  {
-    "name": "主食类",
-    "sort": 2,
-    "status": 1,
-    "createTime": "2024-01-07T00:00:00.000Z",
-    "updateTime": "2024-01-07T00:00:00.000Z"
-  },
-  {
-    "name": "小吃类",
-    "sort": 3,
-    "status": 1,
-    "createTime": "2024-01-07T00:00:00.000Z",
-    "updateTime": "2024-01-07T00:00:00.000Z"
-  },
-  {
-    "name": "饮品类",
-    "sort": 4,
-    "status": 1,
-    "createTime": "2024-01-07T00:00:00.000Z",
-    "updateTime": "2024-01-07T00:00:00.000Z"
-  }
-]
+```bash
+cd uniapp
+npm install
+npm run dev:mp-weixin
 ```
 
-### 6. 设置数据库权限
+微信开发者工具导入：
 
-在云开发控制台 → 数据库 → 权限设置：
-
-#### users 集合
-```json
-{
-  "read": "auth.openid == doc._openid",
-  "write": "auth.openid == doc._openid"
-}
+```text
+uniapp/dist/dev/mp-weixin
 ```
 
-#### categories 集合
-```json
-{
-  "read": true,
-  "write": false
-}
+生产构建：
+
+```bash
+npm run build:mp-weixin
 ```
 
-#### dishes 集合
-```json
-{
-  "read": "doc.status == 1",
-  "write": false
-}
+生产构建产物：
+
+```text
+uniapp/dist/build/mp-weixin
 ```
 
-#### orders 集合
-```json
-{
-  "read": "auth.openid == doc._openid",
-  "write": "auth.openid == doc._openid"
-}
+## 默认账号与测试数据
+
+初始化 SQL 会创建默认商家账号：
+
+```text
+账号：admin
+密码：123456
 ```
 
-#### addresses 集合
-```json
-{
-  "read": "auth.openid == doc._openid",
-  "write": "auth.openid == doc._openid"
-}
+测试菜品、用户、地址、订单可导入：
+
+```text
+server/database/seed-test-data.sql
 ```
 
-#### merchants 集合
-```json
-{
-  "read": false,
-  "write": false
-}
+详情见 [数据库文档](docs/DATABASE.md)。
+
+## 部署建议
+
+开发阶段可以用公网 IP + 微信开发者工具关闭合法域名校验：
+
+```text
+VITE_API_BASE_URL=http://服务器公网IP/api
 ```
 
-#### carts 集合
-```json
-{
-  "read": "auth.openid == doc._openid",
-  "write": "auth.openid == doc._openid"
-}
+正式版必须使用：
+
+- 已备案域名。
+- HTTPS。
+- 微信公众平台配置合法 `request` 域名。
+- 前端关闭 mock 登录：`VITE_MOCK_WECHAT_LOGIN=false`。
+- 后端配置真实 `WECHAT_APP_ID` / `WECHAT_APP_SECRET`。
+
+详细步骤见 [部署文档](docs/DEPLOYMENT.md)。
+
+## 当前验证状态
+
+已验证：
+
+```bash
+cd server && npm run check
+cd uniapp && vue-tsc --noEmit
+cd uniapp && npm run build:mp-weixin
 ```
 
-### 7. 运行项目
+注意：前端类型检查和构建建议使用 Node.js 20+。如果本机默认 Node 是 14，会因为依赖包语法较新而失败。
 
-#### 7.1 运行客户小程序
-1. 打开微信开发者工具
-2. 导入 `customer-app` 目录
-3. 点击编译运行
+## 相关文档
 
-#### 7.2 运行商家管理小程序
-1. 打开微信开发者工具
-2. 导入 `merchant-app` 目录
-3. 点击编译运行
-4. 使用默认账号登录：
-   - 账号：`admin`
-   - 密码：`123456`
-
-## 📖 使用说明
-
-### 客户端使用流程
-
-1. **登录**：打开小程序，点击授权登录
-2. **浏览菜品**：在首页浏览各分类菜品
-3. **加入购物车**：点击"+"按钮将菜品加入购物车
-4. **提交订单**：
-   - 点击底部购物车按钮
-   - 确认商品信息
-   - 选择/添加收货地址
-   - 提交订单
-5. **支付订单**：点击支付按钮完成支付
-6. **查看订单**：在"订单"标签页查看订单状态
-
-### 商家端使用流程
-
-1. **登录**：使用商家账号登录
-2. **查看订单**：
-   - 在"订单"标签页查看所有订单
-   - 点击订单卡片查看详情
-   - 更新订单状态
-3. **管理菜品**：
-   - 在"菜品"标签页查看所有菜品
-   - 点击"添加"按钮添加新菜品
-   - 点击菜品卡片进行编辑或删除
-4. **查看统计**：在"统计"标签页查看销售数据
-
-## 🔧 技术栈
-
-- **前端框架**：微信小程序原生
-- **后端服务**：腾讯云开发 CloudBase
-- **数据库**：CloudBase 云数据库（NoSQL）
-- **云存储**：CloudBase 云存储
-- **云函数**：Node.js
-
-## 📊 数据库结构
-
-### users - 用户信息
-```javascript
-{
-  _id: "auto",
-  _openid: "user_openid",
-  nickName: "张三",
-  avatarUrl: "https://...",
-  phoneNumber: "13800138000",
-  createTime: Date,
-  updateTime: Date
-}
-```
-
-### dishes - 菜品信息
-```javascript
-{
-  _id: "auto",
-  name: "宫保鸡丁",
-  categoryId: "category_id",
-  categoryName: "热销推荐",
-  image: "cloud://...",
-  price: 28.00,
-  description: "经典川菜...",
-  stock: 100,
-  sales: 256,
-  status: 1,
-  isRecommend: false,
-  tags: ["辣", "热销"],
-  createTime: Date,
-  updateTime: Date
-}
-```
-
-### orders - 订单信息
-```javascript
-{
-  _id: "auto",
-  orderNo: "202401070001",
-  _openid: "user_openid",
-  userInfo: { nickName, avatarUrl, phoneNumber },
-  dishes: [{ dishId, name, image, price, quantity }],
-  totalAmount: 56.00,
-  address: { name, phone, province, city, district, detail },
-  remark: "少放辣",
-  status: 1, // 1-待支付，2-待配送，3-配送中，4-已完成，5-已取消
-  payStatus: 0, // 0-未支付，1-已支付
-  payTime: Date,
-  createTime: Date,
-  updateTime: Date,
-  completeTime: Date
-}
-```
-
-## 🎯 核心功能实现
-
-### 数据实时同步
-
-使用 CloudBase 数据库 watch 功能实现实时同步：
-
-```javascript
-// 客户端监听订单状态变化
-const watcher = db.collection('orders')
-  .doc(orderId)
-  .watch({
-    onChange: (snapshot) => {
-      // 订单状态更新时自动刷新
-      this.setData({ order: snapshot.docs[0] })
-    }
-  })
-
-// 商家端监听新订单
-const watcher = db.collection('orders')
-  .where({ status: 1 })
-  .watch({
-    onChange: (snapshot) => {
-      // 有新订单时提醒商家
-      wx.showToast({ title: '收到新订单' })
-    }
-  })
-```
-
-### 库存管理
-
-创建订单时使用云函数扣减库存，防止超卖：
-
-```javascript
-// 扣减库存（原子操作）
-await db.collection('dishes')
-  .doc(dishId)
-  .update({
-    data: {
-      stock: _.inc(-quantity),
-      sales: _.inc(quantity)
-    }
-  })
-```
-
-## 🔐 安全说明
-
-1. **数据库权限**：使用 CloudBase 安全规则限制数据访问
-2. **敏感操作**：通过云函数执行，防止客户端篡改
-3. **商家验证**：商家操作需要身份验证
-4. **金额验证**：订单金额在服务端计算和验证
-
-## 📝 待优化项
-
-- [ ] 接入真实微信支付
-- [ ] 添加订单退款功能
-- [ ] 实现优惠券系统
-- [ ] 添加菜品评价功能
-- [ ] 实现多商家支持
-- [ ] 添加配送员端
-- [ ] 地图配送追踪
-- [ ] 数据报表导出
-
-## 🐛 常见问题
-
-### 1. 云函数调用失败
-- 检查云函数是否上传成功
-- 检查云环境 ID 是否配置正确
-- 查看云函数日志排查错误
-
-### 2. 图片无法显示
-- 检查云存储权限是否设置为公开读
-- 确认图片路径格式正确（cloud://...）
-
-### 3. 数据库操作失败
-- 检查数据库权限设置
-- 确认集合名称正确
-- 查看控制台错误信息
-
-### 4. 商家无法登录
-- 确认 merchants 集合中已添加商家账号
-- 检查密码是否为 MD5 加密后的值
-- 默认密码 `123456` 的 MD5 值：`e10adc3949ba59abbe56e057f20f883e`
-
-## 📄 许可证
-
-MIT License
-
-## 👥 联系方式
-
-如有问题或建议，欢迎提Issue或PR。
+- [部署文档](docs/DEPLOYMENT.md)
+- [前端说明](docs/FRONTEND.md)
+- [接口文档](docs/API.md)
+- [数据库文档](docs/DATABASE.md)
+- [常见问题](docs/TROUBLESHOOTING.md)
