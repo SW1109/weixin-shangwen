@@ -115,9 +115,20 @@ onShow(() => {
   background: linear-gradient(180deg, #FCFAFD 0%, #F8F5FA 48%, #F3EEF7 100%);
 }
 
+/* #ifdef H5 */
+.cart-page {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+/* #endif */
+
 .cart-list {
   flex: 1;
+  width: 100%;
+  min-height: 0;
   padding: 20rpx;
+  box-sizing: border-box;
 }
 
 .cart-item {

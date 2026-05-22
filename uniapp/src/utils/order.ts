@@ -23,9 +23,9 @@ export function getOrderStatusText(status: OrderStatus) {
 export function getOrderStatusColor(status: OrderStatus) {
   return {
     1: '#ff9800',
-    2: '#bc0bf6',
+    2: '#AC27ED',
     3: '#a009d1',
-    4: '#8a0fd8',
+    4: '#7A1FA8',
     5: '#999999',
   }[status]
 }

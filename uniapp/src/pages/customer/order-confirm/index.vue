@@ -205,6 +205,13 @@ onShow(() => {
   background: linear-gradient(180deg, #FCFAFD 0%, #F8F5FA 48%, #F3EEF7 100%);
 }
 
+/* #ifdef H5 */
+.confirm-page {
+  min-height: 100%;
+  padding-bottom: calc(150rpx + var(--window-bottom));
+}
+/* #endif */
+
 .address-section,
 .dishes-section,
 .remark-section,
@@ -404,6 +411,12 @@ onShow(() => {
   box-shadow: 0 -12rpx 30rpx rgba(17, 24, 39, 0.1);
   z-index: 100;
 }
+
+/* #ifdef H5 */
+.bottom-bar {
+  bottom: var(--window-bottom);
+}
+/* #endif */
 
 .total-info {
   flex: 1;

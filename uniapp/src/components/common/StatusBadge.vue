@@ -31,5 +31,34 @@ const color = computed(() => getOrderStatusColor(props.status))
   font-weight: 700;
   background: rgba(255, 255, 255, 0.86);
   box-shadow: 0 8rpx 20rpx rgba(54, 20, 82, 0.06);
+  animation: badgeIn 280ms ease-out both;
+  transition:
+    transform 160ms ease-out,
+    background-color 160ms ease-out;
 }
+
+.status-badge:active {
+  transform: scale(0.96);
+}
+
+@keyframes badgeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8rpx) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* #ifdef H5 */
+@media (prefers-reduced-motion: reduce) {
+  .status-badge {
+    animation: none;
+    transition: none;
+  }
+}
+/* #endif */
 </style>

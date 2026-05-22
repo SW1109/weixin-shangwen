@@ -48,9 +48,11 @@ const hintText = computed(() =>
   padding: 14rpx 20rpx calc(14rpx + env(safe-area-inset-bottom));
   background: linear-gradient(180deg, rgba(248, 245, 250, 0), rgba(248, 245, 250, 0.96) 38%, #F8F5FA 100%);
   z-index: 100;
+  animation: cartBarIn 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .cart-surface {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 16rpx;
@@ -58,8 +60,32 @@ const hintText = computed(() =>
   padding: 16rpx 18rpx;
   border: 1rpx solid rgba(31, 41, 51, 0.1);
   border-radius: 24rpx;
-  background: #ffffff;
+  background:
+    linear-gradient(135deg, rgba(172, 39, 237, 0.045), rgba(255, 255, 255, 0.72)),
+    rgba(255, 255, 255, 0.94);
   box-shadow: 0 -8rpx 28rpx rgba(17, 24, 39, 0.11);
+  /* #ifdef H5 */
+  backdrop-filter: blur(20rpx);
+  /* #endif */
+  overflow: hidden;
+  transition:
+    transform 180ms ease-out,
+    box-shadow 180ms ease-out;
+}
+
+.cart-surface::before {
+  position: absolute;
+  top: 0;
+  right: 30rpx;
+  left: 30rpx;
+  height: 2rpx;
+  background: linear-gradient(90deg, transparent, rgba(172, 39, 237, 0.38), transparent);
+  content: '';
+}
+
+.cart-bar:active .cart-surface {
+  transform: translateY(-3rpx) scale(0.995);
+  box-shadow: 0 -12rpx 34rpx rgba(54, 20, 82, 0.14);
 }
 
 .cart-icon {
@@ -74,6 +100,7 @@ const hintText = computed(() =>
   background: #F4ECF8;
   color: #AC27ED;
   flex-shrink: 0;
+  animation: iconFloat 3200ms ease-in-out infinite;
 }
 
 .cart-symbol {
@@ -94,6 +121,7 @@ const hintText = computed(() =>
   line-height: 36rpx;
   text-align: center;
   font-size: 20rpx;
+  animation: badgePulse 2400ms ease-in-out infinite;
 }
 
 .cart-info {
@@ -130,6 +158,10 @@ const hintText = computed(() =>
   font-weight: 700;
   flex-shrink: 0;
   box-shadow: 0 8rpx 18rpx rgba(172, 39, 237, 0.22);
+  transition:
+    transform 160ms ease-out,
+    box-shadow 160ms ease-out,
+    opacity 160ms ease-out;
 }
 
 .cart-action.disabled {
@@ -143,5 +175,53 @@ const hintText = computed(() =>
   border-color: #E8DDED;
   background: #f6f8f6;
   color: #5c6670;
+  animation: none;
 }
+
+@keyframes cartBarIn {
+  from {
+    opacity: 0;
+    transform: translateY(36rpx);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes iconFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4rpx);
+  }
+}
+
+@keyframes badgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+/* #ifdef H5 */
+@media (prefers-reduced-motion: reduce) {
+  .cart-bar,
+  .cart-icon,
+  .cart-badge,
+  .cart-surface,
+  .cart-action {
+    animation: none;
+    transition: none;
+  }
+}
+/* #endif */
 </style>

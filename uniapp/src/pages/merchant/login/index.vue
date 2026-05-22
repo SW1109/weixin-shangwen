@@ -88,8 +88,14 @@ function onPasswordInput(event: any) {
   justify-content: center;
   min-height: 100vh;
   padding: 40rpx;
-  background: linear-gradient(135deg, #667eea 0%, #bc0bf6 100%);
+  background: linear-gradient(135deg, #8B5CF6 0%, #AC27ED 100%);
 }
+
+/* #ifdef H5 */
+.merchant-login-page {
+  min-height: 100%;
+}
+/* #endif */
 
 .login-box {
   width: 100%;
@@ -146,7 +152,7 @@ function onPasswordInput(event: any) {
   margin: 60rpx 0 0;
   border: none;
   border-radius: 16rpx;
-  background: linear-gradient(135deg, #667eea 0%, #bc0bf6 100%);
+  background: linear-gradient(135deg, #8B5CF6 0%, #AC27ED 100%);
   color: #ffffff;
   line-height: 88rpx;
   font-size: 32rpx;

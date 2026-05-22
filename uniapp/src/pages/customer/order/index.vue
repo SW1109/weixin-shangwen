@@ -145,6 +145,14 @@ onPullDownRefresh(async () => {
   background: linear-gradient(180deg, #FCFAFD 0%, #F8F5FA 48%, #F3EEF7 100%);
 }
 
+/* #ifdef H5 */
+.order-page {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+/* #endif */
+
 .tabs {
   display: flex;
   gap: 8rpx;
@@ -187,6 +195,9 @@ onPullDownRefresh(async () => {
 
 .order-list {
   flex: 1;
+  width: 100%;
+  min-height: 0;
   padding: 20rpx;
+  box-sizing: border-box;
 }
 </style>

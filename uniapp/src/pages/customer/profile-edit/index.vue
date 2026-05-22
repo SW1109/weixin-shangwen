@@ -103,9 +103,15 @@ function setField(key: 'nickName' | 'phoneNumber', value: string) {
   min-height: 100vh;
   padding: 40rpx;
   background:
-    radial-gradient(circle at 16% 0%, rgba(188, 11, 246, 0.1), transparent 38%),
+    linear-gradient(135deg, rgba(172, 39, 237, 0.09) 0%, rgba(172, 39, 237, 0) 36%),
     linear-gradient(180deg, #fbf8ff 0%, #f5f5f5 48%);
 }
+
+/* #ifdef H5 */
+.profile-edit-page {
+  min-height: 100%;
+}
+/* #endif */
 
 .avatar-section {
   display: flex;
@@ -159,7 +165,7 @@ function setField(key: 'nickName' | 'phoneNumber', value: string) {
 .form-section {
   margin-bottom: 60rpx;
   padding: 0 30rpx;
-  border: 2rpx solid rgba(188, 11, 246, 0.08);
+  border: 2rpx solid rgba(172, 39, 237, 0.08);
   border-radius: 24rpx;
   background: #ffffff;
   box-shadow: 0 14rpx 32rpx rgba(54, 20, 82, 0.08);
@@ -199,7 +205,7 @@ function setField(key: 'nickName' | 'phoneNumber', value: string) {
   line-height: 88rpx;
   font-size: 32rpx;
   font-weight: 700;
-  box-shadow: 0 12rpx 28rpx rgba(188, 11, 246, 0.24);
+  box-shadow: 0 12rpx 28rpx rgba(172, 39, 237, 0.24);
 }
 
 .save-button::after {

@@ -105,7 +105,7 @@ async function onAdvance() {
   uni.showModal({
     title: '提示',
     content: `确定${nextAction.value.label}吗？`,
-    confirmColor: '#bc0bf6',
+    confirmColor: '#AC27ED',
     success: (res) => {
       if (!res.confirm || !order.value || !nextAction.value) {
         return
@@ -260,9 +260,16 @@ function callPhone() {
   min-height: 100vh;
   padding-bottom: 148rpx;
   background:
-    radial-gradient(circle at 16% 0%, rgba(188, 11, 246, 0.1), transparent 38%),
+    linear-gradient(135deg, rgba(172, 39, 237, 0.09) 0%, rgba(172, 39, 237, 0) 36%),
     linear-gradient(180deg, #fbf8ff 0%, #f5f5f5 50%);
 }
+
+/* #ifdef H5 */
+.merchant-order-detail-page {
+  min-height: 100%;
+  padding-bottom: calc(148rpx + var(--window-bottom));
+}
+/* #endif */
 
 .content {
   padding: 20rpx;
@@ -276,7 +283,7 @@ function callPhone() {
   border-radius: 24rpx;
   background: linear-gradient(135deg, #AC27ED 0%, #C95BFF 100%);
   color: #ffffff;
-  box-shadow: 0 4rpx 12rpx rgba(188, 11, 246, 0.2);
+  box-shadow: 0 4rpx 12rpx rgba(172, 39, 237, 0.2);
 }
 
 .status-icon {
@@ -304,7 +311,7 @@ function callPhone() {
 .info-card {
   margin-bottom: 20rpx;
   padding: 30rpx;
-  border: 2rpx solid rgba(188, 11, 246, 0.08);
+  border: 2rpx solid rgba(172, 39, 237, 0.08);
   border-radius: 24rpx;
   background: #ffffff;
   box-shadow: 0 12rpx 30rpx rgba(54, 20, 82, 0.06);
@@ -313,7 +320,7 @@ function callPhone() {
 .card-title {
   margin-bottom: 24rpx;
   padding-left: 16rpx;
-  border-left: 6rpx solid #bc0bf6;
+  border-left: 6rpx solid #AC27ED;
   color: #333333;
   font-size: 30rpx;
   font-weight: 700;
@@ -359,7 +366,7 @@ function callPhone() {
   justify-content: center;
   border-radius: 50%;
   background: #f8e6ff;
-  color: #bc0bf6;
+  color: #AC27ED;
   font-size: 40rpx;
 }
 
@@ -484,7 +491,7 @@ function callPhone() {
 }
 
 .info-value.amount {
-  color: #bc0bf6;
+  color: #AC27ED;
   font-size: 36rpx;
   font-weight: 700;
 }
@@ -502,6 +509,12 @@ function callPhone() {
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 -18rpx 38rpx rgba(54, 20, 82, 0.12);
 }
+
+/* #ifdef H5 */
+.bottom-actions {
+  bottom: var(--window-bottom);
+}
+/* #endif */
 
 .action-tip {
   color: #999999;
@@ -528,7 +541,7 @@ function callPhone() {
 .btn-primary {
   background: linear-gradient(135deg, #AC27ED 0%, #C95BFF 100%);
   color: #ffffff;
-  box-shadow: 0 10rpx 24rpx rgba(188, 11, 246, 0.26);
+  box-shadow: 0 10rpx 24rpx rgba(172, 39, 237, 0.26);
 }
 
 .btn-action::after {

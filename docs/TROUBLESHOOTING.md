@@ -197,8 +197,6 @@ http://服务器公网IP/api/health
 https://api.example.com/api/health
 ```
 
-## 上传图片后图片地址打不开
-
 排查：
 
 | 检查项 | 说明 |

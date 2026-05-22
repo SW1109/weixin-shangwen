@@ -25,6 +25,13 @@ const config = {
     publicBaseUrl: process.env.PUBLIC_BASE_URL || '',
     maxFileSize: Number(process.env.UPLOAD_MAX_FILE_SIZE || 5 * 1024 * 1024),
   },
+  h5: {
+    publicBaseUrl:
+      process.env.PUBLIC_H5_BASE_URL ||
+      process.env.H5_PUBLIC_BASE_URL ||
+      process.env.PUBLIC_BASE_URL ||
+      '',
+  },
 }
 
 module.exports = {

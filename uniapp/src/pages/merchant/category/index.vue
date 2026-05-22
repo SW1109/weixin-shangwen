@@ -72,7 +72,7 @@ async function onDelete(id: number) {
   uni.showModal({
     title: '提示',
     content: '确定要删除该分类吗？',
-    confirmColor: '#bc0bf6',
+    confirmColor: '#AC27ED',
     success: (res) => {
       if (!res.confirm) {
         return
@@ -143,7 +143,7 @@ onShow(() => {
           </view>
           <view class="dialog-item dialog-switch">
             <text class="dialog-label">启用状态</text>
-            <switch :checked="form.status === 1" color="#bc0bf6" @change="onStatusChange" />
+            <switch :checked="form.status === 1" color="#AC27ED" @change="onStatusChange" />
           </view>
         </view>
         <view class="dialog-actions">
@@ -160,9 +160,15 @@ onShow(() => {
   min-height: 100vh;
   padding: 20rpx;
   background:
-    radial-gradient(circle at 16% 0%, rgba(188, 11, 246, 0.1), transparent 38%),
+    linear-gradient(135deg, rgba(172, 39, 237, 0.09) 0%, rgba(172, 39, 237, 0) 36%),
     linear-gradient(180deg, #fbf8ff 0%, #f5f5f5 48%);
 }
+
+/* #ifdef H5 */
+.category-page {
+  min-height: 100%;
+}
+/* #endif */
 
 .header {
   margin-bottom: 20rpx;
@@ -179,7 +185,7 @@ onShow(() => {
   line-height: 86rpx;
   font-size: 30rpx;
   font-weight: 700;
-  box-shadow: 0 12rpx 28rpx rgba(188, 11, 246, 0.24);
+  box-shadow: 0 12rpx 28rpx rgba(172, 39, 237, 0.24);
 }
 
 .btn-add::after {
@@ -194,7 +200,7 @@ onShow(() => {
 .category-item {
   margin-bottom: 20rpx;
   padding: 30rpx;
-  border: 2rpx solid rgba(188, 11, 246, 0.08);
+  border: 2rpx solid rgba(172, 39, 237, 0.08);
   border-radius: 24rpx;
   background: #ffffff;
   box-shadow: 0 14rpx 32rpx rgba(54, 20, 82, 0.08);
@@ -284,7 +290,7 @@ onShow(() => {
 .dialog-container {
   width: 600rpx;
   overflow: hidden;
-  border: 2rpx solid rgba(188, 11, 246, 0.12);
+  border: 2rpx solid rgba(172, 39, 237, 0.12);
   border-radius: 28rpx;
   background: #ffffff;
   box-shadow: 0 24rpx 70rpx rgba(26, 9, 42, 0.18);
@@ -327,7 +333,7 @@ onShow(() => {
   width: 100%;
   height: 78rpx;
   padding: 0 20rpx;
-  border: 1rpx solid rgba(188, 11, 246, 0.1);
+  border: 1rpx solid rgba(172, 39, 237, 0.1);
   border-radius: 18rpx;
   background: #fbf8ff;
   font-size: 28rpx;
@@ -355,7 +361,7 @@ onShow(() => {
 }
 
 .btn-confirm {
-  color: #bc0bf6;
+  color: #AC27ED;
   font-weight: 700;
 }
 </style>

@@ -38,7 +38,7 @@ const emit = defineEmits<{
   height: 100%;
   padding: 0;
   border-right: 1rpx solid #E8DDED;
-  background: #F3EEF7;
+  background: linear-gradient(180deg, #F8F5FA 0%, #F3EEF7 100%);
   box-shadow: none;
 }
 
@@ -53,6 +53,17 @@ const emit = defineEmits<{
   text-align: center;
   background: transparent;
   word-break: break-word;
+  animation: categoryIn 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  transition:
+    transform 160ms ease-out,
+    border-color 160ms ease-out,
+    background-color 160ms ease-out,
+    box-shadow 160ms ease-out,
+    color 160ms ease-out;
+}
+
+.category-item:active {
+  transform: translateX(4rpx) scale(0.98);
 }
 
 .category-item.active {
@@ -73,5 +84,27 @@ const emit = defineEmits<{
   height: 42rpx;
   border-radius: 999rpx;
   background: #AC27ED;
+  box-shadow: 0 0 18rpx rgba(172, 39, 237, 0.36);
 }
+
+@keyframes categoryIn {
+  from {
+    opacity: 0;
+    transform: translateX(-16rpx);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* #ifdef H5 */
+@media (prefers-reduced-motion: reduce) {
+  .category-item {
+    animation: none;
+    transition: none;
+  }
+}
+/* #endif */
 </style>

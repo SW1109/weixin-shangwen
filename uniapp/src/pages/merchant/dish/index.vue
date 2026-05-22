@@ -12,6 +12,8 @@ const categories = shallowRef<Category[]>([])
 const selectedCategoryId = shallowRef<number | undefined>()
 const dishes = shallowRef<Dish[]>([])
 const loading = shallowRef(false)
+const dishImageLoaded = shallowRef<Record<number, boolean>>({})
+const dishImageFailed = shallowRef<Record<number, boolean>>({})
 
 async function loadCategories() {
   categories.value = await getMerchantCategories()
@@ -21,6 +23,8 @@ async function loadDishes() {
   loading.value = true
   try {
     dishes.value = await getMerchantDishes(selectedCategoryId.value)
+    dishImageLoaded.value = {}
+    dishImageFailed.value = {}
   } finally {
     loading.value = false
   }
@@ -61,6 +65,32 @@ function openEditDishPage(id: number) {
   uni.navigateTo({
     url: `/pages/merchant/dish-edit/index?id=${id}`,
   })
+}
+
+function getDishImage(item: Dish) {
+  return item.image || '/static/logo.png'
+}
+
+function onDishImageLoad(id: number) {
+  dishImageLoaded.value = {
+    ...dishImageLoaded.value,
+    [id]: true,
+  }
+  dishImageFailed.value = {
+    ...dishImageFailed.value,
+    [id]: false,
+  }
+}
+
+function onDishImageError(id: number) {
+  dishImageLoaded.value = {
+    ...dishImageLoaded.value,
+    [id]: true,
+  }
+  dishImageFailed.value = {
+    ...dishImageFailed.value,
+    [id]: true,
+  }
 }
 
 onLoad(() => {
@@ -117,7 +147,25 @@ onPullDownRefresh(async () => {
     />
     <view v-else class="dish-list">
       <view v-for="dish in dishes" :key="dish.id" class="dish-card">
-        <image class="dish-image" :src="dish.image" mode="aspectFill" @click="openEditDishPage(dish.id)" />
+        <view class="dish-image-wrap" @click="openEditDishPage(dish.id)">
+          <view
+            v-if="!dishImageLoaded[dish.id] && !dishImageFailed[dish.id]"
+            class="image-skeleton"
+          >
+            <text class="image-skeleton-text">加载中</text>
+          </view>
+          <image
+            class="dish-image"
+            :class="{ loaded: dishImageLoaded[dish.id] && !dishImageFailed[dish.id] }"
+            :src="getDishImage(dish)"
+            mode="aspectFill"
+            lazy-load
+            show-menu-by-longpress
+            @load="onDishImageLoad(dish.id)"
+            @error="onDishImageError(dish.id)"
+          />
+          <view v-if="dishImageFailed[dish.id]" class="image-fallback">暂无图片</view>
+        </view>
         <view class="dish-content" @click="openEditDishPage(dish.id)">
           <view class="dish-header">
             <text class="dish-name">{{ dish.name }}</text>
@@ -152,11 +200,17 @@ onPullDownRefresh(async () => {
 <style scoped lang="scss">
 .merchant-dish-page {
   min-height: 100vh;
-  padding-top: 196rpx;
+  padding-top: 236rpx;
   background:
-    radial-gradient(circle at 16% 0%, rgba(188, 11, 246, 0.1), transparent 38%),
+    linear-gradient(135deg, rgba(172, 39, 237, 0.09) 0%, rgba(172, 39, 237, 0) 36%),
     linear-gradient(180deg, #fbf8ff 0%, #f5f5f5 48%);
 }
+
+/* #ifdef H5 */
+.merchant-dish-page {
+  min-height: 100%;
+}
+/* #endif */
 
 .top-bar {
   position: fixed;
@@ -170,6 +224,12 @@ onPullDownRefresh(async () => {
   box-shadow: 0 12rpx 30rpx rgba(54, 20, 82, 0.08);
   z-index: 100;
 }
+
+/* #ifdef H5 */
+.top-bar {
+  top: var(--window-top);
+}
+/* #endif */
 
 .btn-add,
 .btn-category {
@@ -186,11 +246,11 @@ onPullDownRefresh(async () => {
 .btn-add {
   background: linear-gradient(135deg, #AC27ED 0%, #C95BFF 100%);
   color: #ffffff;
-  box-shadow: 0 10rpx 24rpx rgba(188, 11, 246, 0.24);
+  box-shadow: 0 10rpx 24rpx rgba(172, 39, 237, 0.24);
 }
 
 .btn-category {
-  border: 1rpx solid rgba(188, 11, 246, 0.16);
+  border: 1rpx solid rgba(172, 39, 237, 0.16);
   background: #ffffff;
   color: #6d6178;
 }
@@ -210,6 +270,12 @@ onPullDownRefresh(async () => {
   z-index: 99;
 }
 
+/* #ifdef H5 */
+.categories {
+  top: calc(var(--window-top) + 118rpx);
+}
+/* #endif */
+
 .category-scroll {
   width: 100%;
   white-space: nowrap;
@@ -225,7 +291,7 @@ onPullDownRefresh(async () => {
   display: inline-block;
   padding: 14rpx 34rpx;
   border-radius: 999rpx;
-  border: 1rpx solid rgba(188, 11, 246, 0.12);
+  border: 1rpx solid rgba(172, 39, 237, 0.12);
   background: #ffffff;
   color: #6d6178;
   font-size: 26rpx;
@@ -235,7 +301,7 @@ onPullDownRefresh(async () => {
 .category-tag.active {
   background: linear-gradient(135deg, #AC27ED 0%, #C95BFF 100%);
   color: #ffffff;
-  box-shadow: 0 8rpx 18rpx rgba(188, 11, 246, 0.22);
+  box-shadow: 0 8rpx 18rpx rgba(172, 39, 237, 0.22);
 }
 
 .dish-list {
@@ -245,15 +311,61 @@ onPullDownRefresh(async () => {
 .dish-card {
   margin-bottom: 20rpx;
   overflow: hidden;
-  border: 2rpx solid rgba(188, 11, 246, 0.08);
+  border: 2rpx solid rgba(172, 39, 237, 0.08);
   border-radius: 24rpx;
   background: #ffffff;
   box-shadow: 0 14rpx 32rpx rgba(54, 20, 82, 0.08);
 }
 
-.dish-image {
+.dish-image-wrap {
+  position: relative;
   width: 100%;
   height: 360rpx;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(172, 39, 237, 0.08), rgba(255, 255, 255, 0.72)),
+    #F4ECF8;
+}
+
+.dish-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 220ms ease-out;
+}
+
+.dish-image.loaded {
+  opacity: 1;
+}
+
+.image-skeleton {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0.34) 8%, rgba(172, 39, 237, 0.13) 18%, rgba(255, 255, 255, 0.34) 33%),
+    #F4ECF8;
+  background-size: 300% 100%;
+  animation: imageShimmer 1100ms ease-in-out infinite;
+}
+
+.image-skeleton-text,
+.image-fallback {
+  color: rgba(122, 31, 168, 0.72);
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+.image-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F4ECF8;
 }
 
 .dish-content {
@@ -310,12 +422,12 @@ onPullDownRefresh(async () => {
 }
 
 .price-symbol {
-  color: #bc0bf6;
+  color: #AC27ED;
   font-size: 24rpx;
 }
 
 .price-value {
-  color: #bc0bf6;
+  color: #AC27ED;
   font-size: 40rpx;
   font-weight: 700;
 }
@@ -355,8 +467,8 @@ onPullDownRefresh(async () => {
 }
 
 .btn-toggle {
-  border: 1rpx solid rgba(188, 11, 246, 0.16);
-  color: #bc0bf6;
+  border: 1rpx solid rgba(172, 39, 237, 0.16);
+  color: #AC27ED;
 }
 
 .btn-delete {
@@ -370,4 +482,24 @@ onPullDownRefresh(async () => {
   color: #999999;
   font-size: 28rpx;
 }
+
+@keyframes imageShimmer {
+  from {
+    background-position: 120% 0;
+  }
+
+  to {
+    background-position: -120% 0;
+  }
+}
+
+/* #ifdef H5 */
+@media (prefers-reduced-motion: reduce) {
+  .dish-image,
+  .image-skeleton {
+    animation: none;
+    transition: none;
+  }
+}
+/* #endif */
 </style>

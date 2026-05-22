@@ -46,7 +46,7 @@ async function onPay() {
     title: '确认支付',
     content: `确认支付 ¥${formatPrice(order.value.totalAmount)} 吗？`,
     confirmText: '确认支付',
-    confirmColor: '#bc0bf6',
+    confirmColor: '#AC27ED',
     success: (res) => {
       if (!res.confirm || !order.value) {
         return
@@ -80,7 +80,7 @@ function onCancel() {
   uni.showModal({
     title: '提示',
     content: '确定要取消订单吗？',
-    confirmColor: '#bc0bf6',
+    confirmColor: '#AC27ED',
     success: (res) => {
       if (!res.confirm || !order.value) {
         return
@@ -190,9 +190,16 @@ function onContact() {
   min-height: 100vh;
   padding-bottom: 148rpx;
   background:
-    radial-gradient(circle at 16% 0%, rgba(188, 11, 246, 0.1), transparent 38%),
+    linear-gradient(135deg, rgba(172, 39, 237, 0.09) 0%, rgba(172, 39, 237, 0) 36%),
     linear-gradient(180deg, #fbf8ff 0%, #f8f8f8 50%);
 }
+
+/* #ifdef H5 */
+.order-detail-page {
+  min-height: 100%;
+  padding-bottom: calc(148rpx + var(--window-bottom));
+}
+/* #endif */
 
 .status-card {
   display: flex;
@@ -224,7 +231,7 @@ function onContact() {
 .section {
   margin: 20rpx 20rpx 0;
   padding: 30rpx;
-  border: 2rpx solid rgba(188, 11, 246, 0.08);
+  border: 2rpx solid rgba(172, 39, 237, 0.08);
   border-radius: 24rpx;
   background: #ffffff;
   box-shadow: 0 12rpx 30rpx rgba(54, 20, 82, 0.06);
@@ -233,7 +240,7 @@ function onContact() {
 .section-title {
   margin-bottom: 24rpx;
   padding-left: 16rpx;
-  border-left: 6rpx solid #bc0bf6;
+  border-left: 6rpx solid #AC27ED;
   color: #333333;
   font-size: 30rpx;
   font-weight: 700;
@@ -338,7 +345,7 @@ function onContact() {
 }
 
 .total-price {
-  color: #bc0bf6;
+  color: #AC27ED;
   font-size: 36rpx;
   font-weight: 700;
 }
@@ -361,12 +368,18 @@ function onContact() {
   box-shadow: 0 -18rpx 38rpx rgba(54, 20, 82, 0.12);
 }
 
+/* #ifdef H5 */
+.bottom-bar {
+  bottom: var(--window-bottom);
+}
+/* #endif */
+
 .action-button {
   min-width: 148rpx;
   height: 72rpx;
   margin: 0;
   padding: 0 32rpx;
-  border: 1rpx solid rgba(188, 11, 246, 0.16);
+  border: 1rpx solid rgba(172, 39, 237, 0.16);
   border-radius: 999rpx;
   background: #ffffff;
   color: #6d6178;
@@ -379,7 +392,7 @@ function onContact() {
   border: none;
   background: linear-gradient(135deg, #AC27ED 0%, #C95BFF 100%);
   color: #ffffff;
-  box-shadow: 0 10rpx 24rpx rgba(188, 11, 246, 0.26);
+  box-shadow: 0 10rpx 24rpx rgba(172, 39, 237, 0.26);
 }
 
 .action-button::after {

@@ -207,7 +207,7 @@ onLoad((query) => {
     <view class="form-section">
       <view class="form-item switch">
         <text class="label">设为默认地址</text>
-        <switch :checked="form.isDefault" color="#bc0bf6" @change="setField('isDefault', ($event as any).detail.value)" />
+        <switch :checked="form.isDefault" color="#AC27ED" @change="setField('isDefault', ($event as any).detail.value)" />
       </view>
     </view>
 
@@ -223,6 +223,13 @@ onLoad((query) => {
   padding-bottom: 120rpx;
   background: #f5f5f5;
 }
+
+/* #ifdef H5 */
+.address-edit-page {
+  min-height: 100%;
+  padding-bottom: calc(120rpx + var(--window-bottom));
+}
+/* #endif */
 
 .form-section {
   margin-bottom: 20rpx;
@@ -311,7 +318,7 @@ onLoad((query) => {
   height: 90rpx;
   border: none;
   border-radius: 45rpx;
-  background: #bc0bf6;
+  background: #AC27ED;
   color: #ffffff;
   line-height: 90rpx;
   font-size: 32rpx;

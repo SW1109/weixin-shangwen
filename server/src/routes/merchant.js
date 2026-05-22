@@ -25,6 +25,62 @@ const dishSchema = z.object({
   sort: z.coerce.number().int().min(0).default(0),
 })
 
+const orderStatusLabels = {
+  1: '待支付',
+  2: '待配送',
+  3: '配送中',
+  4: '已完成',
+  5: '已取消',
+}
+
+function roundMetric(value, precision = 2) {
+  return Number(Number(value || 0).toFixed(precision))
+}
+
+function formatDateKey(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+function formatShortDateLabel(dateKey) {
+  const [, month, day] = dateKey.split('-')
+  return `${Number(month)}/${Number(day)}`
+}
+
+function buildTrendBuckets({ range, start, end, startDate, endDate }) {
+  if (range === 'today' && !startDate && !endDate) {
+    return {
+      mode: 'hour',
+      buckets: Array.from({ length: 24 }, (_, hour) => ({
+        key: String(hour),
+        label: `${String(hour).padStart(2, '0')}:00`,
+      })),
+    }
+  }
+
+  const buckets = []
+  const current = new Date(start)
+  current.setHours(0, 0, 0, 0)
+  const final = new Date(end)
+  final.setHours(0, 0, 0, 0)
+
+  while (current <= final) {
+    const key = formatDateKey(current)
+    buckets.push({
+      key,
+      label: formatShortDateLabel(key),
+    })
+    current.setDate(current.getDate() + 1)
+  }
+
+  return {
+    mode: 'day',
+    buckets,
+  }
+}
+
 function buildRange({ range = 'today', startDate, endDate } = {}) {
   const end = new Date()
   end.setHours(23, 59, 59, 999)
@@ -44,11 +100,12 @@ function buildRange({ range = 'today', startDate, endDate } = {}) {
   }
 
   if (range === 'week') {
-    start.setDate(start.getDate() - 6)
+    const weekday = start.getDay() || 7
+    start.setDate(start.getDate() - weekday + 1)
   }
 
   if (range === 'month') {
-    start.setDate(start.getDate() - 29)
+    start.setDate(1)
   }
 
   return {
@@ -59,16 +116,40 @@ function buildRange({ range = 'today', startDate, endDate } = {}) {
 
 async function getStatisticsSummary(executor, filters) {
   const { start, end } = buildRange(filters)
+  const trendConfig = buildTrendBuckets({
+    range: filters?.range || 'today',
+    start,
+    end,
+    startDate: filters?.startDate,
+    endDate: filters?.endDate,
+  })
 
   const [orderRows] = await executor.query(
     `
       SELECT
-        COUNT(*) AS total_orders,
-        SUM(CASE WHEN pay_status = 1 THEN total_amount ELSE 0 END) AS total_sales,
-        SUM(CASE WHEN pay_status = 1 THEN 1 ELSE 0 END) AS paid_orders
+        SUM(CASE WHEN status <> 5 THEN 1 ELSE 0 END) AS total_orders,
+        SUM(CASE WHEN pay_status = 1 AND status <> 5 THEN total_amount ELSE 0 END) AS total_sales,
+        SUM(CASE WHEN pay_status = 1 AND status <> 5 THEN 1 ELSE 0 END) AS paid_orders,
+        SUM(CASE WHEN status = 4 THEN 1 ELSE 0 END) AS completed_orders,
+        SUM(CASE WHEN status = 5 THEN 1 ELSE 0 END) AS canceled_orders,
+        COUNT(DISTINCT CASE WHEN status <> 5 THEN user_id ELSE NULL END) AS unique_customers
       FROM orders
       WHERE created_at BETWEEN ? AND ?
-        AND status <> 5
+    `,
+    [start, end],
+  )
+
+  const [repeatCustomerRows] = await executor.query(
+    `
+      SELECT COUNT(*) AS repeat_customers
+      FROM (
+        SELECT user_id
+        FROM orders
+        WHERE created_at BETWEEN ? AND ?
+          AND status <> 5
+        GROUP BY user_id
+        HAVING COUNT(*) > 1
+      ) repeated
     `,
     [start, end],
   )
@@ -91,7 +172,6 @@ async function getStatisticsSummary(executor, filters) {
       SELECT status, COUNT(*) AS total
       FROM orders
       WHERE created_at BETWEEN ? AND ?
-        AND status <> 5
       GROUP BY status
     `,
     [start, end],
@@ -116,32 +196,136 @@ async function getStatisticsSummary(executor, filters) {
     [start, end],
   )
 
+  const trendBucketExpression =
+    trendConfig.mode === 'hour'
+      ? 'HOUR(o.created_at)'
+      : "DATE_FORMAT(o.created_at, '%Y-%m-%d')"
+  const [trendRows] = await executor.query(
+    `
+      SELECT
+        ${trendBucketExpression} AS bucket,
+        COUNT(*) AS orders,
+        SUM(CASE WHEN o.pay_status = 1 THEN o.total_amount ELSE 0 END) AS sales
+      FROM orders o
+      WHERE o.created_at BETWEEN ? AND ?
+        AND o.status <> 5
+      GROUP BY bucket
+      ORDER BY bucket ASC
+    `,
+    [start, end],
+  )
+
+  const [categoryRows] = await executor.query(
+    `
+      SELECT
+        c.id AS category_id,
+        COALESCE(c.name, '未分类') AS category_name,
+        COALESCE(SUM(oi.quantity), 0) AS quantity,
+        COALESCE(SUM(oi.price * oi.quantity), 0) AS amount
+      FROM order_items oi
+      JOIN orders o ON o.id = oi.order_id
+      LEFT JOIN dishes d ON d.id = oi.dish_id
+      LEFT JOIN categories c ON c.id = d.category_id
+      WHERE o.created_at BETWEEN ? AND ?
+        AND o.pay_status = 1
+        AND o.status <> 5
+      GROUP BY c.id, c.name
+      ORDER BY amount DESC
+      LIMIT 8
+    `,
+    [start, end],
+  )
+
   const totals = orderRows[0]
   const ordersByStatus = {
     1: 0,
     2: 0,
     3: 0,
     4: 0,
+    5: 0,
   }
   statusRows.forEach((item) => {
-    ordersByStatus[item.status] = item.total
+    ordersByStatus[item.status] = Number(item.total)
   })
 
   const totalSales = Number(totals.total_sales || 0)
   const totalOrders = Number(totals.total_orders || 0)
+  const paidOrders = Number(totals.paid_orders || 0)
+  const completedOrders = Number(totals.completed_orders || 0)
+  const canceledOrders = Number(totals.canceled_orders || 0)
+  const uniqueCustomers = Number(totals.unique_customers || 0)
+  const repeatCustomers = Number(repeatCustomerRows[0].repeat_customers || 0)
+  const totalDishes = Number(dishRows[0].total_dishes || 0)
+  const allOrderCount = totalOrders + canceledOrders
+  const statusTotal = Object.values(ordersByStatus).reduce(
+    (sum, value) => sum + Number(value || 0),
+    0,
+  )
+  const trendMap = new Map(
+    trendRows.map((row) => [
+      String(row.bucket),
+      {
+        sales: Number(row.sales || 0),
+        orders: Number(row.orders || 0),
+      },
+    ]),
+  )
+  const salesTrend = trendConfig.buckets.map((bucket) => {
+    const current = trendMap.get(bucket.key) || {
+      sales: 0,
+      orders: 0,
+    }
+    return {
+      label: bucket.label,
+      sales: roundMetric(current.sales),
+      orders: current.orders,
+    }
+  })
+  const peakTrend = salesTrend.reduce(
+    (best, item) => (item.sales > best.sales ? item : best),
+    { label: '暂无', sales: 0, orders: 0 },
+  )
 
   return {
-    totalSales,
+    totalSales: roundMetric(totalSales),
     totalOrders,
-    paidOrders: Number(totals.paid_orders || 0),
-    totalDishes: Number(dishRows[0].total_dishes || 0),
-    avgOrderAmount: totalOrders ? totalSales / totalOrders : 0,
+    paidOrders,
+    completedOrders,
+    canceledOrders,
+    uniqueCustomers,
+    repeatCustomers,
+    totalDishes,
+    avgOrderAmount: paidOrders ? roundMetric(totalSales / paidOrders) : 0,
+    avgDishesPerOrder: paidOrders ? roundMetric(totalDishes / paidOrders, 1) : 0,
+    payRate: totalOrders ? roundMetric((paidOrders / totalOrders) * 100, 1) : 0,
+    completionRate: totalOrders
+      ? roundMetric((completedOrders / totalOrders) * 100, 1)
+      : 0,
+    cancelRate: allOrderCount
+      ? roundMetric((canceledOrders / allOrderCount) * 100, 1)
+      : 0,
+    peakSalesLabel: peakTrend.sales > 0 ? peakTrend.label : '暂无高峰',
     ordersByStatus,
+    statusDistribution: Object.keys(ordersByStatus).map((status) => ({
+      status: Number(status),
+      label: orderStatusLabels[status],
+      value: Number(ordersByStatus[status] || 0),
+      ratio: statusTotal
+        ? roundMetric((Number(ordersByStatus[status] || 0) / statusTotal) * 100, 1)
+        : 0,
+    })),
+    salesTrend,
+    categorySales: categoryRows.map((row) => ({
+      categoryId: row.category_id || 0,
+      name: row.category_name,
+      quantity: Number(row.quantity),
+      amount: roundMetric(row.amount),
+    })),
     topDishes: topRows.map((row) => ({
       dishId: row.dish_id,
       name: row.dish_name,
       quantity: Number(row.quantity),
-      amount: Number(row.amount),
+      amount: roundMetric(row.amount),
     })),
   }
 }

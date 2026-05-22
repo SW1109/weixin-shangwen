@@ -151,7 +151,7 @@ SELECT
   'admin',
   '$2b$10$AHGez0MEVPFw6SUQv7/uruZy6UK21l3T3wlFxqTJvCnxqzrfzcpY2',
   'admin',
-  '上文美食餐厅',
+  '汤汤美食餐厅',
   '0755-12345678',
   '深圳市南山区科技园',
   1,

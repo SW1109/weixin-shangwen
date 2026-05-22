@@ -127,6 +127,13 @@ onShow(() => {
   background: linear-gradient(180deg, #FCFAFD 0%, #F8F5FA 48%, #F3EEF7 100%);
 }
 
+/* #ifdef H5 */
+.address-page {
+  min-height: 100%;
+  padding-bottom: calc(160rpx + var(--window-bottom));
+}
+/* #endif */
+
 .address-list {
   display: flex;
   flex-direction: column;
@@ -186,6 +193,12 @@ onShow(() => {
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 -12rpx 30rpx rgba(17, 24, 39, 0.1);
 }
+
+/* #ifdef H5 */
+.add-btn-wrapper {
+  bottom: var(--window-bottom);
+}
+/* #endif */
 
 .add-button {
   width: 100%;

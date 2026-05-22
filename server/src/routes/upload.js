@@ -1,14 +1,12 @@
 const fs = require('fs')
 const path = require('path')
 const { pipeline } = require('stream/promises')
+const {
+  detectImageType,
+  getAllowedImageType,
+  readFileHeader,
+} = require('../lib/images')
 const { ok, fail } = require('../lib/http')
-
-const allowedMimeTypes = {
-  'image/jpeg': '.jpg',
-  'image/png': '.png',
-  'image/webp': '.webp',
-  'image/gif': '.gif',
-}
 
 function buildPublicUrl(request, config, filename) {
   const baseUrl =
@@ -45,8 +43,8 @@ async function uploadRoutes(fastify) {
       return fail(reply, 400, '请选择图片文件')
     }
 
-    const ext = allowedMimeTypes[file.mimetype]
-    if (!ext) {
+    const claimedType = getAllowedImageType(file.mimetype)
+    if (!claimedType) {
       return fail(reply, 400, '仅支持 jpg/png/webp/gif 图片')
     }
 
@@ -54,16 +52,37 @@ async function uploadRoutes(fastify) {
       recursive: true,
     })
 
-    const filename = `${Date.now()}-${Math.random()
+    const token = `${Date.now()}-${Math.random()
       .toString(36)
-      .slice(2, 10)}${ext}`
-    const filePath = path.join(fastify.configData.upload.dir, filename)
+      .slice(2, 10)}`
+    const tempFilename = `${token}.uploading`
+    const tempFilePath = path.join(fastify.configData.upload.dir, tempFilename)
+    let finalFilePath = ''
 
-    await pipeline(file.file, fs.createWriteStream(filePath))
+    try {
+      await pipeline(file.file, fs.createWriteStream(tempFilePath))
+      const header = await readFileHeader(tempFilePath)
+      const detectedType = detectImageType(header)
 
-    ok(reply, {
-      url: buildPublicUrl(request, fastify.configData, filename),
-    })
+      if (!detectedType || detectedType.contentType !== claimedType.contentType) {
+        await fs.promises.rm(tempFilePath, { force: true })
+        return fail(reply, 400, '图片内容与文件类型不匹配')
+      }
+
+      const filename = `${token}${detectedType.ext}`
+      finalFilePath = path.join(fastify.configData.upload.dir, filename)
+      await fs.promises.rename(tempFilePath, finalFilePath)
+
+      ok(reply, {
+        url: buildPublicUrl(request, fastify.configData, filename),
+      })
+    } catch (error) {
+      await fs.promises.rm(tempFilePath, { force: true })
+      if (finalFilePath) {
+        await fs.promises.rm(finalFilePath, { force: true })
+      }
+      throw error
+    }
   })
 }
 

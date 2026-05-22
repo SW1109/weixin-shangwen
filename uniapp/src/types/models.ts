@@ -122,10 +122,42 @@ export interface StatisticsSummary {
   totalSales: number
   totalOrders: number
   paidOrders: number
+  completedOrders: number
+  canceledOrders: number
+  uniqueCustomers: number
+  repeatCustomers: number
   totalDishes: number
   avgOrderAmount: number
+  avgDishesPerOrder: number
+  payRate: number
+  completionRate: number
+  cancelRate: number
+  peakSalesLabel: string
   ordersByStatus: Record<string, number>
+  statusDistribution: StatusDistributionStat[]
+  salesTrend: SalesTrendPoint[]
+  categorySales: CategorySalesStat[]
   topDishes: TopDishStat[]
+}
+
+export interface SalesTrendPoint {
+  label: string
+  sales: number
+  orders: number
+}
+
+export interface StatusDistributionStat {
+  status: number
+  label: string
+  value: number
+  ratio: number
+}
+
+export interface CategorySalesStat {
+  categoryId: number
+  name: string
+  quantity: number
+  amount: number
 }
 
 export interface TopDishStat {

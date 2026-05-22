@@ -29,6 +29,7 @@ const emit = defineEmits<{
   gap: 16rpx;
   padding: 100rpx 32rpx;
   text-align: center;
+  animation: emptyIn 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .empty-title {
@@ -53,9 +54,39 @@ const emit = defineEmits<{
   font-size: 28rpx;
   font-weight: 700;
   box-shadow: 0 8rpx 18rpx rgba(172, 39, 237, 0.22);
+  transition:
+    transform 160ms ease-out,
+    box-shadow 160ms ease-out;
+}
+
+.empty-button:active {
+  transform: scale(0.96);
+  box-shadow: 0 6rpx 14rpx rgba(172, 39, 237, 0.2);
 }
 
 .empty-button::after {
   border: none;
 }
+
+@keyframes emptyIn {
+  from {
+    opacity: 0;
+    transform: translateY(18rpx) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* #ifdef H5 */
+@media (prefers-reduced-motion: reduce) {
+  .empty-state,
+  .empty-button {
+    animation: none;
+    transition: none;
+  }
+}
+/* #endif */
 </style>

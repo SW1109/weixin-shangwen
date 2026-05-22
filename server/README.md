@@ -1,6 +1,6 @@
-# 上文点餐 Node 后端
+# 汤汤点餐 Node 后端
 
-这是上文点餐小程序的 HTTP 后端服务，使用 Node.js + Fastify + MySQL 实现，替代原生微信小程序云函数。
+这是汤汤点餐小程序的 HTTP 后端服务，使用 Node.js + Fastify + MySQL 实现，替代原生微信小程序云函数。
 
 ## 功能范围
 
@@ -64,10 +64,11 @@ WECHAT_APP_SECRET=
 
 UPLOAD_DIR=/www/wwwroot/shangwen-api/uploads
 PUBLIC_BASE_URL=http://服务器公网IP
+PUBLIC_H5_BASE_URL=http://服务器公网IP
 UPLOAD_MAX_FILE_SIZE=5242880
 ```
 
-正式上线时 `PUBLIC_BASE_URL` 应改为 HTTPS 域名，并配置真实微信小程序 `AppID` / `AppSecret`。
+`PUBLIC_H5_BASE_URL` 用于商品分享落地页跳转到 H5 菜品详情，必须指向前端 H5 站点根地址。正式上线时 `PUBLIC_BASE_URL` 和 `PUBLIC_H5_BASE_URL` 应改为 HTTPS 域名，并配置真实微信小程序 `AppID` / `AppSecret`。
 
 ## 数据库
 

@@ -3,7 +3,7 @@
     {
       "path": "pages/customer/home/index",
       "style": {
-        "navigationBarTitleText": "上文点餐",
+        "navigationBarTitleText": "汤汤点餐",
         "enablePullDownRefresh": true
       }
     },
@@ -123,7 +123,7 @@
   ],
   "globalStyle": {
     "navigationBarTextStyle": "white",
-    "navigationBarTitleText": "上文点餐",
+    "navigationBarTitleText": "汤汤点餐",
     "navigationBarBackgroundColor": "#AC27ED",
     "backgroundColor": "#F8F5FA"
   },

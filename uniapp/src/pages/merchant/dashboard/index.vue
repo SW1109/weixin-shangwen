@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onLoad, onPullDownRefresh } from '@dcloudio/uni-app'
-import { shallowRef } from 'vue'
+import { computed, shallowRef } from 'vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import { getDashboard } from '@/api/merchant'
 import { useMerchantGuard } from '@/composables/useMerchantGuard'
@@ -14,6 +14,38 @@ const dashboard = shallowRef<DashboardData | null>(null)
 const loading = shallowRef(false)
 const lastDashboardSignature = shallowRef('')
 const hasDashboardSnapshot = shallowRef(false)
+
+const analysisPreview = computed(() => {
+  const stats = dashboard.value?.todayStats
+  const totalOrders = stats?.totalOrders || 0
+  const paidOrders = stats?.paidOrders || 0
+  const payRate =
+    stats?.payRate ?? (totalOrders ? (paidOrders / totalOrders) * 100 : 0)
+  const topDish = stats?.topDishes?.[0]
+
+  return [
+    {
+      label: '支付转化',
+      value: `${Number(payRate || 0).toFixed(1)}%`,
+      desc: `${paidOrders} / ${totalOrders} 单`,
+    },
+    {
+      label: '客单价',
+      value: `¥${formatPrice(stats?.avgOrderAmount || 0)}`,
+      desc: '按已支付订单',
+    },
+    {
+      label: '销售高峰',
+      value: stats?.peakSalesLabel || '暂无',
+      desc: '今日趋势识别',
+    },
+    {
+      label: '热销单品',
+      value: topDish?.name || '暂无',
+      desc: topDish ? `销量 ${topDish.quantity} 份` : '等待订单数据',
+    },
+  ]
+})
 
 interface LoadDashboardOptions {
   silent?: boolean
@@ -152,6 +184,24 @@ useVisiblePolling(
         </view>
       </view>
 
+      <view class="analysis-card" @click="openStatisticsPage">
+        <view class="analysis-header">
+          <view>
+            <view class="analysis-kicker">BUSINESS RADAR</view>
+            <view class="analysis-title">经营分析</view>
+            <view class="analysis-desc">查看今日、本周、本月销售趋势与菜品结构</view>
+          </view>
+          <view class="analysis-action">进入分析 ›</view>
+        </view>
+        <view class="analysis-grid">
+          <view v-for="item in analysisPreview" :key="item.label" class="analysis-item">
+            <view class="analysis-label">{{ item.label }}</view>
+            <view class="analysis-value">{{ item.value }}</view>
+            <view class="analysis-item-desc">{{ item.desc }}</view>
+          </view>
+        </view>
+      </view>
+
       <view class="order-status-card">
         <view class="card-title">订单状态</view>
         <view class="status-list">
@@ -242,26 +292,103 @@ useVisiblePolling(
 
 <style scoped lang="scss">
 .dashboard-page {
+  position: relative;
   min-height: 100vh;
   padding: 20rpx;
   background: linear-gradient(180deg, #FCFAFD 0%, #F8F5FA 52%, #F3EEF7 100%);
 }
 
+/* #ifdef H5 */
+.dashboard-page {
+  min-height: 100%;
+}
+/* #endif */
+
 .stats-card,
+.analysis-card,
 .order-status-card,
 .function-card,
 .top-dishes-card,
 .recent-orders-card {
+  position: relative;
+  overflow: hidden;
   margin-bottom: 20rpx;
   padding: 30rpx;
-  border: 2rpx solid #E8DDED;
-  border-radius: 20rpx;
-  background: rgba(255, 255, 255, 0.96);
+  border: 2rpx solid rgba(172, 39, 237, 0.08);
+  border-radius: 24rpx;
+  background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 10rpx 24rpx rgba(17, 24, 39, 0.07);
+  /* #ifdef H5 */
+  backdrop-filter: blur(18rpx);
+  /* #endif */
+  animation: dashboardCardIn 460ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  transition:
+    transform 180ms ease-out,
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out;
+}
+
+.stats-card::before,
+.analysis-card::before,
+.order-status-card::before,
+.function-card::before,
+.top-dishes-card::before,
+.recent-orders-card::before {
+  position: absolute;
+  top: 0;
+  right: 32rpx;
+  left: 32rpx;
+  height: 2rpx;
+  background: linear-gradient(90deg, transparent, rgba(172, 39, 237, 0.3), transparent);
+  content: '';
+}
+
+.stats-card:active,
+.analysis-card:active,
+.order-status-card:active,
+.function-card:active,
+.top-dishes-card:active,
+.recent-orders-card:active {
+  transform: translateY(-4rpx) scale(0.995);
+  border-color: rgba(172, 39, 237, 0.18);
+  box-shadow: 0 22rpx 46rpx rgba(54, 20, 82, 0.12);
+}
+
+.order-status-card {
+  animation-delay: 80ms;
+}
+
+.analysis-card {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 88% 6%, rgba(40, 215, 255, 0.16), transparent 34%),
+    linear-gradient(135deg, rgba(172, 39, 237, 0.08), rgba(255, 255, 255, 0.94) 48%),
+    rgba(255, 255, 255, 0.92);
+  animation-delay: 40ms;
+}
+
+.analysis-card::after {
+  position: absolute;
+  right: -76rpx;
+  bottom: -84rpx;
+  width: 220rpx;
+  height: 220rpx;
+  border-radius: 50%;
+  background: rgba(172, 39, 237, 0.09);
+  content: '';
+}
+
+.function-card {
+  animation-delay: 120ms;
+}
+
+.top-dishes-card,
+.recent-orders-card {
+  animation-delay: 160ms;
 }
 
 .stats-card {
-  background: linear-gradient(135deg, #fff5ef 0%, #ffffff 48%);
+  background: linear-gradient(135deg, rgba(244, 236, 248, 0.76) 0%, rgba(255, 255, 255, 0.94) 52%);
 }
 
 .card-title {
@@ -272,6 +399,86 @@ useVisiblePolling(
   color: #111827;
   font-size: 32rpx;
   font-weight: 700;
+}
+
+.analysis-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18rpx;
+  margin-bottom: 24rpx;
+}
+
+.analysis-kicker {
+  color: #7A1FA8;
+  font-size: 20rpx;
+  font-weight: 900;
+  letter-spacing: 2rpx;
+}
+
+.analysis-title {
+  margin-top: 8rpx;
+  color: #111827;
+  font-size: 34rpx;
+  font-weight: 900;
+}
+
+.analysis-desc {
+  margin-top: 8rpx;
+  color: #5c6670;
+  font-size: 23rpx;
+  line-height: 1.4;
+}
+
+.analysis-action {
+  flex-shrink: 0;
+  padding: 10rpx 16rpx;
+  border: 1rpx solid rgba(172, 39, 237, 0.14);
+  border-radius: 999rpx;
+  background: #F4ECF8;
+  color: #7A1FA8;
+  font-size: 23rpx;
+  font-weight: 800;
+}
+
+.analysis-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14rpx;
+}
+
+.analysis-item {
+  min-height: 132rpx;
+  padding: 20rpx;
+  border: 1rpx solid rgba(172, 39, 237, 0.08);
+  border-radius: 22rpx;
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.55);
+}
+
+.analysis-label {
+  color: #7d8791;
+  font-size: 22rpx;
+}
+
+.analysis-value {
+  overflow: hidden;
+  margin-top: 8rpx;
+  color: #111827;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 31rpx;
+  font-weight: 900;
+}
+
+.analysis-item-desc {
+  margin-top: 8rpx;
+  color: #7A1FA8;
+  font-size: 21rpx;
 }
 
 .more {
@@ -318,7 +525,16 @@ useVisiblePolling(
   align-items: center;
   padding: 18rpx 8rpx;
   border-radius: 20rpx;
-  background: #f7faf8;
+  background: rgba(255, 255, 255, 0.72);
+  transition:
+    transform 160ms ease-out,
+    box-shadow 160ms ease-out,
+    background-color 160ms ease-out;
+}
+
+.status-item:active {
+  transform: translateY(-4rpx) scale(0.98);
+  box-shadow: 0 14rpx 26rpx rgba(54, 20, 82, 0.09);
 }
 
 .status-icon {
@@ -358,8 +574,19 @@ useVisiblePolling(
   justify-content: center;
   margin-bottom: 0;
   border-radius: 22rpx;
-  background: #f7faf8;
+  background: rgba(255, 255, 255, 0.74);
   box-shadow: inset 0 0 0 1rpx #E8DDED;
+  transition:
+    transform 160ms ease-out,
+    box-shadow 160ms ease-out,
+    background-color 160ms ease-out;
+}
+
+.function-item:active {
+  transform: translateY(-4rpx) scale(0.98);
+  box-shadow:
+    inset 0 0 0 1rpx rgba(172, 39, 237, 0.18),
+    0 14rpx 26rpx rgba(54, 20, 82, 0.09);
 }
 
 .function-icon {
@@ -415,8 +642,19 @@ useVisiblePolling(
 .order-item {
   margin-bottom: 16rpx;
   padding: 24rpx;
-  border-radius: 12rpx;
-  background: #f7faf8;
+  border: 1rpx solid rgba(172, 39, 237, 0.08);
+  border-radius: 18rpx;
+  background: rgba(255, 255, 255, 0.74);
+  transition:
+    transform 160ms ease-out,
+    box-shadow 160ms ease-out,
+    border-color 160ms ease-out;
+}
+
+.order-item:active {
+  transform: translateX(4rpx) scale(0.99);
+  border-color: rgba(172, 39, 237, 0.2);
+  box-shadow: 0 12rpx 24rpx rgba(54, 20, 82, 0.08);
 }
 
 .order-item:last-child {
@@ -457,5 +695,47 @@ useVisiblePolling(
   text-align: center;
   color: #5c6670;
   font-size: 28rpx;
+  animation: loadingPulse 1200ms ease-in-out infinite;
 }
+
+@keyframes dashboardCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(22rpx) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes loadingPulse {
+  0%,
+  100% {
+    opacity: 0.56;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* #ifdef H5 */
+@media (prefers-reduced-motion: reduce) {
+  .stats-card,
+  .analysis-card,
+  .order-status-card,
+  .function-card,
+  .top-dishes-card,
+  .recent-orders-card,
+  .status-item,
+  .function-item,
+  .order-item,
+  .loading-text {
+    animation: none;
+    transition: none;
+  }
+}
+/* #endif */
 </style>

@@ -101,6 +101,34 @@ npm run build:mp-weixin
 uniapp/dist/build/mp-weixin
 ```
 
+H5 构建：
+
+```bash
+npm run build:h5
+```
+
+H5 产物：
+
+```text
+uniapp/dist/build/h5
+```
+
+商品分享：
+
+```text
+小程序：菜品卡片和菜品详情页使用微信原生分享，打开后进入 /pages/customer/dish/index?id=菜品ID。
+H5：分享商品时使用 /api/share/dishes/菜品ID，方便钉钉读取 Open Graph 卡片，再跳转到 H5 菜品详情。
+```
+
+部署到宝塔 H5 静态站点时，推荐使用同源接口：
+
+```env
+VITE_API_BASE_URL=/api
+VITE_MOCK_WECHAT_LOGIN=true
+```
+
+这样浏览器访问 `http://服务器公网IP/` 时，接口会请求 `http://服务器公网IP/api`。正式域名启用后再改为 `https://你的域名/api`。
+
 类型检查：
 
 ```bash

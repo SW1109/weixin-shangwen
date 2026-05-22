@@ -149,9 +149,17 @@ useVisiblePolling(
   height: 100vh;
   padding-top: 112rpx;
   background:
-    radial-gradient(circle at 16% 0%, rgba(188, 11, 246, 0.1), transparent 38%),
+    linear-gradient(135deg, rgba(172, 39, 237, 0.09) 0%, rgba(172, 39, 237, 0) 36%),
     linear-gradient(180deg, #fbf8ff 0%, #f5f5f5 48%);
 }
+
+/* #ifdef H5 */
+.merchant-order-page {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+/* #endif */
 
 .tabs {
   position: fixed;
@@ -161,11 +169,17 @@ useVisiblePolling(
   display: flex;
   gap: 8rpx;
   padding: 14rpx 16rpx;
-  border-bottom: 1rpx solid rgba(188, 11, 246, 0.08);
+  border-bottom: 1rpx solid rgba(172, 39, 237, 0.08);
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 12rpx 30rpx rgba(54, 20, 82, 0.08);
   z-index: 100;
 }
+
+/* #ifdef H5 */
+.tabs {
+  top: var(--window-top);
+}
+/* #endif */
 
 .tab-item {
   flex: 1;
@@ -181,7 +195,7 @@ useVisiblePolling(
   background: linear-gradient(135deg, #AC27ED 0%, #C95BFF 100%);
   color: #ffffff;
   font-weight: 700;
-  box-shadow: 0 8rpx 18rpx rgba(188, 11, 246, 0.22);
+  box-shadow: 0 8rpx 18rpx rgba(172, 39, 237, 0.22);
 }
 
 .tab-item.active::after {
@@ -189,9 +203,17 @@ useVisiblePolling(
 }
 
 .order-list {
+  width: 100%;
   height: calc(100vh - 112rpx);
   padding: 20rpx;
+  box-sizing: border-box;
 }
+
+/* #ifdef H5 */
+.order-list {
+  height: calc(100% - 112rpx);
+}
+/* #endif */
 
 .loading-text {
   padding: 60rpx 0;

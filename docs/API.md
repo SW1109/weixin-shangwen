@@ -153,7 +153,7 @@ Authorization: Bearer <merchantToken>
     "id": 1,
     "username": "admin",
     "role": "admin",
-    "storeName": "上文美食餐厅",
+    "storeName": "汤汤美食餐厅",
     "storePhone": "0755-12345678",
     "storeAddress": "深圳市南山区科技园",
     "status": 1
@@ -246,6 +246,18 @@ GET /api/dishes?categoryId=1&keyword=牛肉
 ### GET `/api/dishes/:id`
 
 获取菜品详情。
+
+### GET `/api/share/dishes/:id`
+
+获取菜品 H5 分享落地页，返回 `text/html`，用于钉钉等外部 IM 读取 Open Graph 分享卡片信息。页面会包含商品标题、描述、封面图等 SEO meta，并自动跳转到 H5 菜品详情页。
+
+示例：
+
+```text
+GET /api/share/dishes/1
+```
+
+后端需要配置 `PUBLIC_H5_BASE_URL`，例如 `http://服务器公网IP` 或 `https://你的域名`，用于生成最终跳转地址。
 
 ## 用户端接口
 

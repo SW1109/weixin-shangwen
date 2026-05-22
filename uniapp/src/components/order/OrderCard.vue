@@ -103,14 +103,38 @@ const nextMerchantAction = computed(() => getMerchantNextAction(props.order.stat
 
 <style scoped lang="scss">
 .order-card {
+  position: relative;
+  overflow: hidden;
   padding: 26rpx;
   margin-bottom: 20rpx;
-  border: 2rpx solid rgba(188, 11, 246, 0.08);
+  border: 2rpx solid rgba(172, 39, 237, 0.08);
   background:
-    linear-gradient(135deg, rgba(188, 11, 246, 0.035), rgba(40, 215, 255, 0.025)),
-    #ffffff;
+    linear-gradient(135deg, rgba(172, 39, 237, 0.04), rgba(139, 92, 246, 0.025)),
+    rgba(255, 255, 255, 0.94);
   border-radius: 24rpx;
   box-shadow: 0 14rpx 32rpx rgba(54, 20, 82, 0.08);
+  transform: translateZ(0);
+  animation: orderCardIn 440ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  transition:
+    transform 180ms ease-out,
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out;
+}
+
+.order-card::before {
+  position: absolute;
+  top: 0;
+  right: 28rpx;
+  left: 28rpx;
+  height: 2rpx;
+  background: linear-gradient(90deg, transparent, rgba(172, 39, 237, 0.34), transparent);
+  content: '';
+}
+
+.order-card:active {
+  transform: translateY(-4rpx) scale(0.995);
+  border-color: rgba(172, 39, 237, 0.18);
+  box-shadow: 0 22rpx 46rpx rgba(54, 20, 82, 0.13);
 }
 
 .order-header {
@@ -189,6 +213,12 @@ const nextMerchantAction = computed(() => getMerchantNextAction(props.order.stat
   border-radius: 18rpx;
   background: #f5f5f5;
   flex-shrink: 0;
+  box-shadow: 0 8rpx 18rpx rgba(17, 24, 39, 0.08);
+  transition: transform 180ms ease-out;
+}
+
+.order-card:active .dish-image {
+  transform: scale(1.025);
 }
 
 .dish-info {
@@ -213,9 +243,9 @@ const nextMerchantAction = computed(() => getMerchantNextAction(props.order.stat
   align-items: flex-start;
   margin-bottom: 20rpx;
   padding: 20rpx;
-  border: 1rpx solid rgba(188, 11, 246, 0.1);
+  border: 1rpx solid rgba(172, 39, 237, 0.1);
   border-radius: 18rpx;
-  background: linear-gradient(135deg, #fff8fe, #f3fbff);
+  background: linear-gradient(135deg, rgba(244, 236, 248, 0.72), rgba(243, 251, 255, 0.76));
 }
 
 .address-icon {
@@ -244,7 +274,7 @@ const nextMerchantAction = computed(() => getMerchantNextAction(props.order.stat
 .amount {
   font-size: 32rpx;
   font-weight: 700;
-  color: #bc0bf6;
+  color: #AC27ED;
 }
 
 .order-actions {
@@ -273,13 +303,18 @@ const nextMerchantAction = computed(() => getMerchantNextAction(props.order.stat
 .ghost-button {
   background: #ffffff;
   color: #6d6178;
-  border: 1rpx solid rgba(188, 11, 246, 0.18);
+  border: 1rpx solid rgba(172, 39, 237, 0.18);
 }
 
 .brand-button {
   background: linear-gradient(135deg, #AC27ED 0%, #C95BFF 100%);
   color: #ffffff;
-  box-shadow: 0 10rpx 22rpx rgba(188, 11, 246, 0.24);
+  box-shadow: 0 10rpx 22rpx rgba(172, 39, 237, 0.24);
+}
+
+.ghost-button:active,
+.brand-button:active {
+  transform: scale(0.96);
 }
 
 .action-tip {
@@ -289,4 +324,28 @@ const nextMerchantAction = computed(() => getMerchantNextAction(props.order.stat
   font-size: 26rpx;
   color: #999999;
 }
+
+@keyframes orderCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(22rpx) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* #ifdef H5 */
+@media (prefers-reduced-motion: reduce) {
+  .order-card,
+  .dish-image,
+  .ghost-button,
+  .brand-button {
+    animation: none;
+    transition: none;
+  }
+}
+/* #endif */
 </style>

@@ -229,6 +229,13 @@ onShow(() => {
   background: linear-gradient(180deg, #FCFAFD 0%, #F8F5FA 48%, #F3EEF7 100%);
 }
 
+/* #ifdef H5 */
+.profile-page {
+  min-height: 100%;
+  padding-bottom: calc(40rpx + var(--window-bottom));
+}
+/* #endif */
+
 .user-card {
   margin-bottom: 20rpx;
   padding: 60rpx 30rpx 40rpx;

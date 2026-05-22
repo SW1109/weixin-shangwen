@@ -78,6 +78,14 @@ export function request<T>({
         const statusCode = response.statusCode || 500
         const payload = response.data as ApiEnvelope<T> | T
 
+        if (
+          typeof payload === 'string' &&
+          /^<(?:!doctype\s+html|html)\b/i.test(payload.trim())
+        ) {
+          reject(new Error('接口地址配置异常，请检查 VITE_API_BASE_URL 或 H5 反向代理'))
+          return
+        }
+
         if (statusCode >= 400) {
           const message =
             (payload as ApiEnvelope<T>)?.message || '服务端请求失败'

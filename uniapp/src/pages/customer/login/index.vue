@@ -118,8 +118,14 @@ function onNicknameInput(event: any) {
   justify-content: center;
   min-height: 100vh;
   padding: 40rpx;
-  background: linear-gradient(135deg, #bc0bf6 0%, #d65eff 100%);
+  background: linear-gradient(135deg, #AC27ED 0%, #C95BFF 100%);
 }
+
+/* #ifdef H5 */
+.login-page {
+  min-height: 100%;
+}
+/* #endif */
 
 .login-box {
   width: 100%;
@@ -167,7 +173,7 @@ function onNicknameInput(event: any) {
   margin: 0;
   border: none;
   border-radius: 44rpx;
-  background: #bc0bf6;
+  background: #AC27ED;
   color: #ffffff;
   line-height: 88rpx;
   font-size: 32rpx;
@@ -185,6 +191,6 @@ function onNicknameInput(event: any) {
 }
 
 .link {
-  color: #bc0bf6;
+  color: #AC27ED;
 }
 </style>

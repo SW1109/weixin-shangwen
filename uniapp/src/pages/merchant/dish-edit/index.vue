@@ -294,11 +294,11 @@ onLoad((query) => {
         <view class="section-title">其他设置</view>
         <view class="form-item form-switch">
           <text class="label">推荐菜品</text>
-          <switch :checked="form.isRecommend" color="#bc0bf6" @change="onRecommendChange" />
+          <switch :checked="form.isRecommend" color="#AC27ED" @change="onRecommendChange" />
         </view>
         <view class="form-item form-switch">
           <text class="label">立即上架</text>
-          <switch :checked="form.status === 1" color="#bc0bf6" @change="onStatusChange" />
+          <switch :checked="form.status === 1" color="#AC27ED" @change="onStatusChange" />
         </view>
       </view>
 
@@ -316,9 +316,16 @@ onLoad((query) => {
   min-height: 100vh;
   padding: 20rpx 20rpx 156rpx;
   background:
-    radial-gradient(circle at 16% 0%, rgba(188, 11, 246, 0.1), transparent 38%),
+    linear-gradient(135deg, rgba(172, 39, 237, 0.09) 0%, rgba(172, 39, 237, 0) 36%),
     linear-gradient(180deg, #fbf8ff 0%, #f5f5f5 48%);
 }
+
+/* #ifdef H5 */
+.dish-edit-page {
+  min-height: 100%;
+  padding-bottom: calc(156rpx + var(--window-bottom));
+}
+/* #endif */
 
 .form {
   display: flex;
@@ -328,7 +335,7 @@ onLoad((query) => {
 .form-section {
   margin-bottom: 20rpx;
   padding: 30rpx;
-  border: 2rpx solid rgba(188, 11, 246, 0.08);
+  border: 2rpx solid rgba(172, 39, 237, 0.08);
   border-radius: 24rpx;
   background: #ffffff;
   box-shadow: 0 12rpx 30rpx rgba(54, 20, 82, 0.06);
@@ -345,7 +352,7 @@ onLoad((query) => {
   width: 100%;
   height: 400rpx;
   overflow: hidden;
-  border: 2rpx dashed rgba(188, 11, 246, 0.28);
+  border: 2rpx dashed rgba(172, 39, 237, 0.28);
   border-radius: 22rpx;
   background: linear-gradient(135deg, #fbf8ff, #f3fbff);
 }
@@ -432,7 +439,7 @@ onLoad((query) => {
   padding: 10rpx 20rpx;
   border-radius: 999rpx;
   background: linear-gradient(135deg, #f8e6ff, #effaff);
-  color: #bc0bf6;
+  color: #AC27ED;
   font-size: 24rpx;
 }
 
@@ -451,7 +458,7 @@ onLoad((query) => {
   flex: 1;
   height: 78rpx;
   padding: 0 20rpx;
-  border: 1rpx solid rgba(188, 11, 246, 0.1);
+  border: 1rpx solid rgba(172, 39, 237, 0.1);
   border-radius: 18rpx;
   background: #fbf8ff;
   font-size: 26rpx;
@@ -481,6 +488,12 @@ onLoad((query) => {
   box-shadow: 0 -18rpx 38rpx rgba(54, 20, 82, 0.12);
 }
 
+/* #ifdef H5 */
+.submit-container {
+  bottom: var(--window-bottom);
+}
+/* #endif */
+
 .btn-submit {
   width: 100%;
   height: 88rpx;
@@ -492,7 +505,7 @@ onLoad((query) => {
   line-height: 88rpx;
   font-size: 30rpx;
   font-weight: 700;
-  box-shadow: 0 12rpx 28rpx rgba(188, 11, 246, 0.24);
+  box-shadow: 0 12rpx 28rpx rgba(172, 39, 237, 0.24);
 }
 
 .btn-add-tag::after,
