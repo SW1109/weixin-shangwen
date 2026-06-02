@@ -50,7 +50,7 @@ VITE_MOCK_WECHAT_LOGIN=true
 公网 IP 调试：
 
 ```env
-VITE_API_BASE_URL=http://39.97.44.248/api
+VITE_API_BASE_URL=http://api.guangnian.xin:8088/api
 VITE_MOCK_WECHAT_LOGIN=true
 ```
 

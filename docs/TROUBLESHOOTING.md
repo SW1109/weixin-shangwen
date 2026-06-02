@@ -162,7 +162,7 @@ curl http://127.0.0.1/api/health
 开发阶段如果使用：
 
 ```text
-http://39.97.44.248/api
+http://api.guangnian.xin:8088/api
 ```
 
 微信开发者工具需要勾选：
@@ -210,7 +210,7 @@ https://api.example.com/api/health
 
 ```env
 UPLOAD_DIR=/www/wwwroot/shangwen-api/uploads
-PUBLIC_BASE_URL=http://39.97.44.248
+PUBLIC_BASE_URL=http://api.guangnian.xin:8088
 ```
 
 正式上线：

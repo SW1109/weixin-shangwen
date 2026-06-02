@@ -1,7 +1,11 @@
 const trimSlash = (value: string) => value.replace(/\/+$/, '')
 
+const fallbackApiBaseUrl = import.meta.env.DEV
+  ? '/api'
+  : 'https://www.guangnian.xin:8088/api'
+
 export const API_BASE_URL = trimSlash(
-  import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:3000/api',
+  import.meta.env.VITE_API_BASE_URL || fallbackApiBaseUrl,
 )
 
 export const ENABLE_MOCK_WECHAT_LOGIN =
